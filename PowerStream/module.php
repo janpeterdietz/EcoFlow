@@ -45,7 +45,7 @@ declare(strict_types=1);
 				$this->SetStatus(200); //One of the Variable is missing
 				return;
 			} 
-			$this->SetStatus(102); //noch inaktiv
+			$this->SetStatus(104); //noch inaktiv
 
 		
 
@@ -103,7 +103,7 @@ declare(strict_types=1);
 			else
 			$this->LogMessage('Start MqttClient id ' . 'M ist aber auch', KL_NOTIFY);	
 
-			$this->SetStatus(104); //actice
+			$this->SetStatus(102); //actice
 
 		
 		}
