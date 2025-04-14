@@ -19,7 +19,9 @@ declare(strict_types=1);
 
 			$this->RegisterAttributeString("Mqtt_Password", "");
 			$this->RegisterAttributeString("Mqtt_UserName", "");
+			$this->RegisterAttributeString("Mqtt_ClientID", "");
 			
+	
 			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
 
 
@@ -61,6 +63,10 @@ declare(strict_types=1);
 
 			$this->SetValue("deviceName", $response['data'][0]['deviceName']);//sn deines Gerätes
 			$this->SetValue("Seriennummer", $response['data'][0]['sn']);//sn deines Gerätes
+			$this->WriteAttributeString("Mqtt_ClientID", $response['eagleEyeTraceId']);
+			
+			
+			
 
 
 			$response = $this->getMQTTCertification($GET_MQTT_CERTIFICATION_URL);
@@ -121,16 +127,18 @@ declare(strict_types=1);
 			
 			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quota', 'Retain' => true,'QoS' => 0);
 			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'Retain' => true,'QoS' => 0);
-			$t3 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/#', 'Retain' => true,'QoS' => 0);
+			//$t3 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/#', 'Retain' => true,'QoS' => 0);
 			
-			$Subscriptions = [$t1,  $t2, $t3];
+			$Subscriptions = [$t1,  $t2];
 			$Subscriptions = json_encode($Subscriptions, 1);
 
 			$this->LogMessage('GetConfiguration ' . $Subscriptions , KL_NOTIFY);	
+			$ClientID = $this->ReadAttributeString("Mqtt_ClientID");
+		
 
 			
 			$settings = [
-				"ClientID" => "828a6b70d88f5f9c88678",
+				"ClientID" => $ClientID,
 				
 				"Password" => $PW,
 				"UserName" => $UserName,
