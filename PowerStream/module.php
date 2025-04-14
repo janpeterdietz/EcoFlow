@@ -125,6 +125,9 @@ declare(strict_types=1);
 			
 			$Subscriptions = [$t1,  $t2];
 			$Subscriptions = json_encode($Subscriptions, 1);
+
+			$this->LogMessage('GetConfiguration ' . $Subscriptions , KL_NOTIFY);	
+
 			
 			$settings = [
 				"ClientID" => "828a6b70d88f5f9c88678",
