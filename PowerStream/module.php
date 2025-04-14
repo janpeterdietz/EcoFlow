@@ -16,9 +16,12 @@ declare(strict_types=1);
 			$this->RegisterVariableString ("deviceName", "deviceName",  "", 10) ;
 			$this->RegisterVariableString ("Seriennummer", "Seriennummer",  "", 10) ;
 
-			$this->RegisterVariableString("Password", "Password", "" , 20) ;
-			$this->RegisterVariableString("UserName", "UserName", "", 20) ;
+			//$this->RegisterVariableString("Password", "Password", "" , 20) ;
+			//$this->RegisterVariableString("UserName", "UserName", "", 20) ;
 
+			$this->RegisterAttributeString("Mqtt_Password", "");
+			$this->RegisterAttributeString("Mqtt_UserName", "");
+			
 			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
 
 
@@ -69,11 +72,13 @@ declare(strict_types=1);
 				$this->LogMessage('Start getMQTTCertification Daten falsch'. json_encode($response) , KL_NOTIFY);
 				return;
 			}
-		
 
-			$this->SetValue("Password", $response['data']['certificatePassword']);
-			$this->SetValue("UserName", $response['data']['certificateAccount']);
-				
+			//$this->SetValue("Password", $response['data']['certificatePassword']);
+			//$this->SetValue("UserName", $response['data']['certificateAccount']);
+		
+			$this->WriteAttributeString("Mqtt_Password", $response['data']['certificatePassword']);
+			$this->WriteAttributeString("Mqtt_UserName", $response['data']['certificateAccount']);
+			
 
 			$config = json_decode( $this->GetConfigurationForParent(), true);
 		
@@ -118,8 +123,13 @@ declare(strict_types=1);
 			$settings = [
 				"ClientID" => "828a6b70d88f5f9c88678",
 				
-				"Password" => $this->GetValue("Password"),
-				"UserName" => $this->GetValue("UserName"),
+				//"Password" => $this->GetValue("Password"),
+				//"UserName" => $this->GetValue("UserName"),
+
+
+				"Password" => $this->ReadAttributeString("Mqtt_Password"),
+				"UserName" => $this->ReadAttributeString("Mqtt_UserName"),
+			
 		
 				"Subscriptions" => "[{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/quota\",\"QoS\":0},{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/status\",\"QoS\":0}]"
 				
