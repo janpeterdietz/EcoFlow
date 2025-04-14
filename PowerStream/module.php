@@ -36,10 +36,20 @@ declare(strict_types=1);
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
-
 			$accessKey = $this->ReadPropertyString("accessKey");
 			$secretKey = $this->ReadPropertyString("secretKey");
+	
 
+			if ( ($accessKey == '') || ($secretKey == '')) 
+			{
+				$this->SetStatus(200); //One of the Variable is missing
+				return;
+			} else 
+			{
+				//$this->SetStatus(102); //All right
+			}
+
+		
 
 			$HOST = "https://api-e.ecoflow.com";
 			$GET_MQTT_CERTIFICATION_URL = $HOST . "/iot-open/sign/certification";
@@ -65,15 +75,18 @@ declare(strict_types=1);
 			$config = json_decode( $this->GetConfigurationForParent(), true);
 		
 			$this_Instance = IPS_GetInstance($this->InstanceID);
-			$id_Mqtt_Spliiter_Instance = $this_Instance['ConnectionID'];
+			$id_Mqtt_Spliiter_Instance = $this_Instance['ConnectionID'];				
 			$Mqtt_Spliiter_Instance = IPS_GetInstance($id_Mqtt_Spliiter_Instance);
+			IPS_SetName($id_Mqtt_Spliiter_Instance, 'EcoFlow Mqtt Client('. $this->InstanceID .')' );
+		
 
 			$this->LogMessage('Start Mqttsplitter ' . json_encode($Mqtt_Spliiter_Instance), KL_NOTIFY);
 
 			$id_Mqtt_Client_Instance = $Mqtt_Spliiter_Instance['ConnectionID'];
+			IPS_SetName($id_Mqtt_Client_Instance, 'EcoFlow Mqtt Client Socket('. $id_Mqtt_Spliiter_Instance .')' );
 			$this->LogMessage('Start MqttClient id ' . $id_Mqtt_Client_Instance, KL_NOTIFY);
 
-		
+			
 			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
 				"Host":"mqtt-e.ecoflow.com",
 				"Open":false,
@@ -85,7 +98,7 @@ declare(strict_types=1);
 			if ($result)
 			$this->LogMessage('Start MqttClient id ' . 'Erfolg', KL_NOTIFY);
 			else
-			$this->LogMessage('Start MqttClient id ' . 'Mist aber auch', KL_NOTIFY);	
+			$this->LogMessage('Start MqttClient id ' . 'M ist aber auch', KL_NOTIFY);	
 
 		}
 
