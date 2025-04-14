@@ -100,7 +100,8 @@ declare(strict_types=1);
 				"UseSSL":true,
 				"VerifyHost":true,
 				"VerifyPeer":false}');
-			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
+
+			//$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 			if ($result)
 			$this->LogMessage('Start MqttClient id ' . 'Erfolg', KL_NOTIFY);
 			else
