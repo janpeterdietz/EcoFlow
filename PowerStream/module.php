@@ -97,7 +97,7 @@ declare(strict_types=1);
 			
 			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
 				"Host":"mqtt-e.ecoflow.com",
-				"Open":false,
+				"Open":true,
 				"Port":8883,
 				"UseSSL":true,
 				"VerifyHost":true,
@@ -126,24 +126,13 @@ declare(strict_types=1);
 			$Subscriptions = [$t1,  $t2];
 			$Subscriptions = json_encode($Subscriptions, 1);
 			
-			
-			//$this->LogMessage('topic 1 '. $t1, KL_NOTIFY);
-			//$this->LogMessage('topic 2 '. $t1, KL_NOTIFY);
-
-			
 			$settings = [
 				"ClientID" => "828a6b70d88f5f9c88678",
 				
-				//"Password" => $this->GetValue("Password"),
-				//"UserName" => $this->GetValue("UserName"),
-
-
 				"Password" => $PW,
 				"UserName" => $UserName,
 			
-		
 				"Subscriptions" => $Subscriptions
-				
             ];
 
             return json_encode($settings, JSON_UNESCAPED_SLASHES);
