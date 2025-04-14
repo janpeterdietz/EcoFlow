@@ -2,7 +2,7 @@
     "elements": [
         { "type": "ValidationTextBox", "name": "accessKey", "caption": "Access Key" },
         { "type": "PasswordTextBox", "name": "secretKey", "caption": "secret Key" }
-    ],
+    ], 
     "actions": [],
     "status": []
 }
