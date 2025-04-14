@@ -16,8 +16,6 @@ declare(strict_types=1);
 			$this->RegisterVariableString ("deviceName", "deviceName",  "", 10) ;
 			$this->RegisterVariableString ("Seriennummer", "Seriennummer",  "", 10) ;
 
-			//$this->RegisterVariableString("Password", "Password", "" , 20) ;
-			//$this->RegisterVariableString("UserName", "UserName", "", 20) ;
 
 			$this->RegisterAttributeString("Mqtt_Password", "");
 			$this->RegisterAttributeString("Mqtt_UserName", "");
@@ -200,7 +198,7 @@ declare(strict_types=1);
 
 			if ($MqttClientStatus >=200)
 			{
-				$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
+				//$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 			}
 
 			
