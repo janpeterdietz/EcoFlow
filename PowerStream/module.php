@@ -95,7 +95,7 @@ declare(strict_types=1);
 			
 			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
 				"Host":"mqtt-e.ecoflow.com",
-				"Open":true,
+				"Open":false,
 				"Port":8883,
 				"UseSSL":true,
 				"VerifyHost":true,
