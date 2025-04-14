@@ -120,8 +120,8 @@ declare(strict_types=1);
 
 			$SN = $this->GetValue('Seriennummer');
 			
-			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quata', 'Retain' => true,'QoS' => 0);
-			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'Retain' => true,'QoS' => 0);
+			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quata', 'Retain' => true,'QoS' => 1);
+			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'Retain' => true,'QoS' => 1);
 			
 			$Subscriptions = [$t1,  $t2];
 			$Subscriptions = json_encode($Subscriptions, 1);
