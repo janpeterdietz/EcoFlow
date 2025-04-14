@@ -97,7 +97,7 @@ declare(strict_types=1);
 			
 			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
 				"Host":"mqtt-e.ecoflow.com",
-				"Open":true,
+				"Open":false,
 				"Port":8883,
 				"UseSSL":true,
 				"VerifyHost":true,
@@ -115,10 +115,21 @@ declare(strict_types=1);
 
 		public function GetConfigurationForParent()
         {
-			$SN = $this->GetValue("Seriennummer"); 
-			$topic1 = "";
-			$topic2 = "";
+			$UserName = $this->ReadAttributeString('Mqtt_UserName');
+			$PW = $this->ReadAttributeString('Mqtt_Password');
+
+			$SN = $this->GetValue('Seriennummer');
 			
+			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quata', 'QoS' => 0);
+			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'QoS' => 0);
+			
+			$Subscriptions = [$t1,  $t2];
+			$Subscriptions = json_encode($Subscriptions, 1);
+			
+			
+			//$this->LogMessage('topic 1 '. $t1, KL_NOTIFY);
+			//$this->LogMessage('topic 2 '. $t1, KL_NOTIFY);
+
 			
 			$settings = [
 				"ClientID" => "828a6b70d88f5f9c88678",
@@ -127,11 +138,11 @@ declare(strict_types=1);
 				//"UserName" => $this->GetValue("UserName"),
 
 
-				"Password" => $this->ReadAttributeString("Mqtt_Password"),
-				"UserName" => $this->ReadAttributeString("Mqtt_UserName"),
+				"Password" => $PW,
+				"UserName" => $UserName,
 			
 		
-				"Subscriptions" => "[{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/quota\",\"QoS\":0},{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/status\",\"QoS\":0}]"
+				"Subscriptions" => $Subscriptions
 				
             ];
 
