@@ -118,7 +118,7 @@ declare(strict_types=1);
 
 			$SN = $this->GetValue('Seriennummer');
 			
-			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quata', 'Retain' => true,'QoS' => 0);
+			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quota', 'Retain' => true,'QoS' => 0);
 			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'Retain' => true,'QoS' => 0);
 			$t3 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/#', 'Retain' => true,'QoS' => 0);
 			
