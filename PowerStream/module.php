@@ -63,7 +63,7 @@ declare(strict_types=1);
 
 			$this->SetValue("deviceName", $response['data'][0]['deviceName']);//sn deines Gerätes
 			$this->SetValue("Seriennummer", $response['data'][0]['sn']);//sn deines Gerätes
-			$this->WriteAttributeString("Mqtt_ClientID", $response['eagleEyeTraceId']);
+			$this->WriteAttributeString("Mqtt_ClientID", substr( $response['eagleEyeTraceId'], 0, 22));
 			
 			
 			
@@ -107,7 +107,7 @@ declare(strict_types=1);
 				"VerifyHost":true,
 				"VerifyPeer":false}');
 
-			//$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
+			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 			if ($result)
 			$this->LogMessage('Start MqttClient id ' . 'Erfolg', KL_NOTIFY);
 			else
