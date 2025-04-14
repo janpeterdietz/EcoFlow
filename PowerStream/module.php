@@ -22,7 +22,7 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
 
 
-			$this->RegisterTimer("UpdateConnect", 10*1000, 'ECOFLOW_UpdateConnect(' . $this->InstanceID . ');');
+			$this->RegisterTimer("UpdateConnect", 20*1000, 'ECOFLOW_UpdateConnect(' . $this->InstanceID . ');');
 			
 		}
 
