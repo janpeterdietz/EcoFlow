@@ -46,7 +46,7 @@ declare(strict_types=1);
 				return;
 			} else 
 			{
-				$this->SetStatus(102); //All right
+				$this->SetStatus(104); //All right
 			}
 
 		
@@ -59,13 +59,18 @@ declare(strict_types=1);
 			$GET_ALL_QUOTA_URL = $HOST . "/iot-open/sign/device/quota/all";
 			
 			$response = $this->deviceList($DEVICE_LIST_URL);
-			
 
 			$this->SetValue("deviceName", $response['data'][0]['deviceName']);//sn deines Gerätes
 			$this->SetValue("Seriennummer", $response['data'][0]['sn']);//sn deines Gerätes
 
 
 			$response = $this->getMQTTCertification($GET_MQTT_CERTIFICATION_URL);
+			if ($response['message'] != 'Success')
+			{
+				$this->SetStatus(200); //One of the Variable is missing
+				$this->LogMessage('Start getMQTTCertification Daten falsch'. json_encode($response) , KL_NOTIFY);
+				return;
+			}
 		
 
 			$this->SetValue("Password", $response['data']['certificatePassword']);
@@ -89,7 +94,7 @@ declare(strict_types=1);
 			
 			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
 				"Host":"mqtt-e.ecoflow.com",
-				"Open":false,
+				"Open":true,
 				"Port":8883,
 				"UseSSL":true,
 				"VerifyHost":true,
