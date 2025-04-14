@@ -122,9 +122,9 @@ declare(strict_types=1);
 			
 			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quata', 'Retain' => true,'QoS' => 0);
 			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'Retain' => true,'QoS' => 0);
-			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/#', 'Retain' => true,'QoS' => 0);
+			$t3 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/#', 'Retain' => true,'QoS' => 0);
 			
-			$Subscriptions = [$t1,  $t2];
+			$Subscriptions = [$t1,  $t2, $t3];
 			$Subscriptions = json_encode($Subscriptions, 1);
 
 			$this->LogMessage('GetConfiguration ' . $Subscriptions , KL_NOTIFY);	
