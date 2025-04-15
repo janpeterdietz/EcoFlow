@@ -95,23 +95,14 @@ declare(strict_types=1);
 			
 			$ClientID = $this->ReadAttributeString("Mqtt_ClientID");
 
-
+//"Subscriptions":"[{\"Topic\":\"'.$t1.'\",\"QoS\":0},{\"Topic\":\"'.$t2.'\",\"QoS\":0}]",
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, 
 			'{	"ClientID":"' 		.$ClientID. '",
 				"Password":"' 		.$PW. '",
-				"Subscriptions":"[{\"Topic\":\"'.$t1.'\",\"QoS\":0},{\"Topic\":\"'.$t2.'\",\"QoS\":0}]",
+				
 				"UserName":"' 		.$UserName. '"}');
 
-				$subscribe_data = [
-					'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-					'PacketType'       => 8,
-					'QualityOfService' => 0,
-					'Retain'           => true,
-					'Topic'            => $t1,
-					'Payload'          => ''
-				];
-	
-				$this->Send($subscribe_data);
+
 				
 		
 
@@ -146,6 +137,16 @@ declare(strict_types=1);
 
 			$this->SetStatus(102); //actice
 
+			$subscribe_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 8,
+				'QualityOfService' => 0,
+				'Retain'           => true,
+				'Topic'            => $t1,
+				'Payload'          => ''
+			];
+
+			$this->Send($subscribe_data);
 		
 
 		}
