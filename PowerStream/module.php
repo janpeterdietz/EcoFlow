@@ -90,12 +90,10 @@ declare(strict_types=1);
 
 			$SN = $this->GetValue('Seriennummer');
 			
-			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quota', 'QoS' => 0);
-			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'QoS' => 0);
+			$t1 =  '/open/'. $UserName. '/'. $SN .'/quota';
+			$t2 =  '/open/'. $UserName. '/'. $SN .'/status';
 			
-			$Subscriptions = [$t1,  $t2];
-			$Subscriptions = json_encode($Subscriptions, 2);
-
+		
 			$this->LogMessage('GetConfiguration ' . $Subscriptions , KL_NOTIFY);	
 			$ClientID = $this->ReadAttributeString("Mqtt_ClientID");
 
@@ -103,7 +101,7 @@ declare(strict_types=1);
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, 
 			'{	"ClientID":"' 		.$ClientID. '",
 				"Password":"' 		.$PW. '",
-				"Subscriptions":"[{\"Topic\":\"/open/'.$UserName.'/'.$SN.'/quota\",\"QoS\":0},{\"Topic\":\"/open/'.$UserName.'/'.$SN.'/status\",\"QoS\":0}]",
+				"Subscriptions":"[{\"Topic\":\"/open/'.$t1.'\",\"QoS\":0},{\"Topic\":\"/open/'.$UserName.'/'.$SN.'/status\",\"QoS\":0}]",
 				"UserName":"' 		.$UserName. '"}');
 				
 		
@@ -138,6 +136,16 @@ declare(strict_types=1);
 			$this->LogMessage('Start MqttClient Socket ' . 'Mist aber auch', KL_NOTIFY);	
 
 			$this->SetStatus(102); //actice
+
+/*			$subscribe_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 8,
+				'QualityOfService' => 0,
+				'Retain'           => true,
+				'Topic'            => '',
+				'Payload'          => ''
+			];
+*/
 		}
 
 		/*public function GetConfigurationForParent()
