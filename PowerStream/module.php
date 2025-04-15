@@ -107,19 +107,6 @@ declare(strict_types=1);
 			else
 			$this->LogMessage('Start MqttClient Splitter ' . 'Mist aber auch', KL_NOTIFY);	
 
-
-			$subscribe_data = [
-				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-				'PacketType'       => 8,
-				'QualityOfService' => 0,
-				'Retain'           => true,
-				'Topic'            => $t1,
-				'Payload'          => ''
-			];
-
-			$this->Send($subscribe_data);	
-
-
 			$this->LogMessage('Start Mqttsplitter ' . json_encode($Mqtt_Spliiter_Instance), KL_NOTIFY);
 
 			$id_Mqtt_Client_Instance = $Mqtt_Spliiter_Instance['ConnectionID'];
@@ -144,7 +131,27 @@ declare(strict_types=1);
 
 			$this->SetStatus(102); //actice
 
+			$subscribe_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 8,
+				'QualityOfService' => 0,
+				'Retain'           => true,
+				'Topic'            => $t1,
+				'Payload'          => ''
+			];
 
+			$this->Send($subscribe_data);	
+
+			$subscribe_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 8,
+				'QualityOfService' => 0,
+				'Retain'           => true,
+				'Topic'            => $t2,
+				'Payload'          => ''
+			];
+
+			$this->Send($subscribe_data);	
 		
 
 		}
