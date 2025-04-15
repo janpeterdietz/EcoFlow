@@ -84,7 +84,7 @@ declare(strict_types=1);
 			$this->WriteAttributeString("Mqtt_UserName", $response['data']['certificateAccount']);
 			
 
-			$config = json_decode( $this->GetConfigurationForParent(), true);
+			//$config = json_decode( $this->GetConfigurationForParent(), true);
 		
 			$this_Instance = IPS_GetInstance($this->InstanceID);
 			$id_Mqtt_Spliiter_Instance = $this_Instance['ConnectionID'];				
