@@ -181,7 +181,7 @@ declare(strict_types=1);
 
 		public function Send(string $PayLoad)
 		{
-			$this->SendDataToParent(json_encode(['DataID' => '{018EF6B5-AB94-40C6-AA53-46943E824ACF}', "Payload" => $PayLoad]));
+			$this->SendDataToParent(json_encode(['DataID' => '{018EF6B5-AB94-40C6-AA53-46943E824ACF}', "Buffer" => $PayLoad]));
 			//$this->SendDataToParent(json_encode(['DataID' => '{018EF6B5-AB94-40C6-AA53-46943E824ACF}', $PayLoad]));
 		}
 		
