@@ -100,7 +100,8 @@ declare(strict_types=1);
 
 
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, 
-			'{"ClientID":"ea1a2a5829174473337454","Password":"c8a2c21d23db45da91a434260bb111da","Subscriptions":"[{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/quota\",\"QoS\":0},{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/status\",\"QoS\":0}]","UserName":"open-24d53b742e4f42dd874174cbd1bf9717"}'
+			'{
+				"ClientID": "$ClientID" ,"Password":"c8a2c21d23db45da91a434260bb111da","Subscriptions":"[{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/quota\",\"QoS\":0},{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/status\",\"QoS\":0}]","UserName":"open-24d53b742e4f42dd874174cbd1bf9717"}'
 		);
 			/*
 			'{
