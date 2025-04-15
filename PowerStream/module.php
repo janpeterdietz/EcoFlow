@@ -107,14 +107,14 @@ declare(strict_types=1);
 				"VerifyHost":true,
 				"VerifyPeer":false}'); */
 
-			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
+			/*$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 			if ($result)
 			$this->LogMessage('Start MqttClient id ' . 'Erfolg', KL_NOTIFY);
 			else
 			$this->LogMessage('Start MqttClient id ' . 'M ist aber auch', KL_NOTIFY);	
 
 			$this->SetStatus(102); //actice
-
+			*/
 		
 		}
 
