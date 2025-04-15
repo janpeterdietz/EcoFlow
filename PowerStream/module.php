@@ -104,8 +104,9 @@ declare(strict_types=1);
 				"ClientID": 			"$ClientID" ,
 				"Password": 			"$PW",
 				"Subscriptions":		"$Subscriptions",
-				"UserName":				"$UserName"}');
-		);
+				"UserName":				"$UserName"
+			}'
+		);		
 			/*
 			'{
 				"ClientID" :'. $ClientID . ',
