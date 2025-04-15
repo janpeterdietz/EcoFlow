@@ -93,17 +93,17 @@ declare(strict_types=1);
 			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'Retain' => true,'QoS' => 0);
 			
 			$Subscriptions = [$t1,  $t2];
-			$Subscriptions = json_encode($Subscriptions, 1);
+			$Subscriptions = json_encode($Subscriptions, 2);
 
 			$this->LogMessage('GetConfiguration ' . $Subscriptions , KL_NOTIFY);	
 			$ClientID = $this->ReadAttributeString("Mqtt_ClientID");
 
 
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, 
-			'{	"ClientID":"' .$ClientID. '",
-				"Password":"' .$PW. '",
+			'{	"ClientID":"' 		.$ClientID. '",
+				"Password":"' 		.$PW. '",
 				"Subscriptions":"[{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/quota\",\"QoS\":0},{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/status\",\"QoS\":0}]",
-				"UserName":"' .$UserName. '"}');
+				"UserName":"' 		.$UserName. '"}');
 				
 			/*
 			'{
