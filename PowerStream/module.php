@@ -96,10 +96,12 @@ declare(strict_types=1);
 			$ClientID = $this->ReadAttributeString("Mqtt_ClientID");
 
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, 
-			'{	"ClientID":"' 		.$ClientID. '",
+			'{	
+				"ClientID":"' 		.$ClientID. '",
 				"Password":"' 		.$PW. '",
-				"Subscriptions":"[{\"Topic\":\"'.$t1.'\",\"QoS\":0},{\"Topic\":\"'.$t2.'\",\"QoS\":0}]",
-				"UserName":"' 		.$UserName. '"}');
+				"UserName":"' 		.$UserName. '",
+				"Subscriptions":"[{\"Topic\":\"'.$t1.'\",\"QoS\":0},{\"Topic\":\"'.$t2.'\",\"QoS\":0}]"
+			}');
 		
 			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
 			if ($result)
