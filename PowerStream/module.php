@@ -102,7 +102,7 @@ declare(strict_types=1);
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, 
 			'{	"ClientID":"' 		.$ClientID. '",
 				"Password":"' 		.$PW. '",
-				"Subscriptions":"[{\"Topic\":\"/open/'.UserName.'/'.$SN.'/quota\",\"QoS\":0},{\"Topic\":\"/open/'.UserName.'/'.$SN.'/status\",\"QoS\":0}]",
+				"Subscriptions":"[{\"Topic\":\"/open/'.$UserName.'/'.$SN.'/quota\",\"QoS\":0},{\"Topic\":\"/open/'.$UserName.'/'.$SN.'/status\",\"QoS\":0}]",
 				"UserName":"' 		.$UserName. '"}');
 				
 			/*
