@@ -135,14 +135,14 @@ declare(strict_types=1);
 
 			$this->SetStatus(102); //actice
 
-			$subscribe_data = [
+			$subscribe_data = json_encode([
 				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
 				'PacketType'       => 8,
 				'QualityOfService' => 0,
 				'Retain'           => true,
 				'Topic'            => $t1,
 				'Payload'          => ''
-			];
+			]);
 
 			$this->Send($subscribe_data);
 
