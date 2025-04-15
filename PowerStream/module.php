@@ -65,10 +65,6 @@ declare(strict_types=1);
 			$this->SetValue("Seriennummer", $response['data'][0]['sn']);//sn deines Gerätes
 			$this->WriteAttributeString("Mqtt_ClientID", substr( $response['eagleEyeTraceId'], 0, 22));
 			
-			
-			
-
-
 			$response = $this->getMQTTCertification($GET_MQTT_CERTIFICATION_URL);
 			if ($response['message'] != 'Success')
 			{
@@ -118,7 +114,7 @@ declare(strict_types=1);
 		
 		}
 
-		public function GetConfigurationForParent()
+		/*public function GetConfigurationForParent()
         {
 			$UserName = $this->ReadAttributeString('Mqtt_UserName');
 			$PW = $this->ReadAttributeString('Mqtt_Password');
@@ -139,17 +135,15 @@ declare(strict_types=1);
 			
 			$settings = [
 				"ClientID" => $ClientID,
-				
 				"Password" => $PW,
 				"UserName" => $UserName,
 				"Retain" => true,
-			
 				"Subscriptions" => $Subscriptions
             ];
 
             return json_encode($settings, JSON_UNESCAPED_SLASHES);
         }
-		
+		*/
 
 		public function Send(string $PayLoad)
 		{
