@@ -73,9 +73,6 @@ declare(strict_types=1);
 				return;
 			}
 
-			//$this->SetValue("Password", $response['data']['certificatePassword']);
-			//$this->SetValue("UserName", $response['data']['certificateAccount']);
-		
 			$this->WriteAttributeString("Mqtt_Password", $response['data']['certificatePassword']);
 			$this->WriteAttributeString("Mqtt_UserName", $response['data']['certificateAccount']);
 			
@@ -94,7 +91,6 @@ declare(strict_types=1);
 			
 			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quota', 'Retain' => true,'QoS' => 0);
 			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'Retain' => true,'QoS' => 0);
-			//$t3 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/#', 'Retain' => true,'QoS' => 0);
 			
 			$Subscriptions = [$t1,  $t2];
 			$Subscriptions = json_encode($Subscriptions, 1);
@@ -126,7 +122,7 @@ declare(strict_types=1);
 			
 			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
 				"Host":"mqtt-e.ecoflow.com",
-				"Open":false,
+				"Open":true,
 				"Port":8883,
 				"UseSSL":true,
 				"VerifyHost":true,
