@@ -95,22 +95,22 @@ declare(strict_types=1);
 			$this->LogMessage('Start MqttClient id ' . $id_Mqtt_Client_Instance, KL_NOTIFY);
 
 			
-			/*IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
+			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
 				"Host":"mqtt-e.ecoflow.com",
 				"Open":false,
 				"Port":8883,
 				"UseSSL":true,
 				"VerifyHost":true,
-				"VerifyPeer":false}'); */
+				"VerifyPeer":false}'); 
 
-			/*$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
+			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 			if ($result)
 			$this->LogMessage('Start MqttClient id ' . 'Erfolg', KL_NOTIFY);
 			else
 			$this->LogMessage('Start MqttClient id ' . 'M ist aber auch', KL_NOTIFY);	
 
 			$this->SetStatus(102); //actice
-			*/
+			
 		
 		}
 
