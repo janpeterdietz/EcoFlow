@@ -104,7 +104,6 @@ declare(strict_types=1);
 				"ClientID" :'. $ClientID . ',
 				"Password" :'. $PW . ',
 				"UserName" :'. $UserName .',
-				"Retain" : true,
 				"Subscriptions" :'. $Subscriptions . ' 
 			}'); 
 
