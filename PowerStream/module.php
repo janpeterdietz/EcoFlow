@@ -23,6 +23,7 @@ declare(strict_types=1);
 			
 	
 			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
+			$this->RegisterVariableInteger("Status", "Status", "", 30) ;
 
 
 			$this->RegisterTimer("UpdateConnect", 20*1000, 'ECOFLOW_UpdateConnect(' . $this->InstanceID . ');');
@@ -191,6 +192,11 @@ declare(strict_types=1);
 			if (array_key_exists('invOutputWatts', $Payload_params))
 			{
             	$this->setvalue("OutputWatts", intval($Payload_params['invOutputWatts'])/10);
+			}
+
+			if (array_key_exists('Status', $Payload_params))
+			{
+            	$this->setvalue("Status", $Payload_params['Status']);
 			}
 		}
 
