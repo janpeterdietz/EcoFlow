@@ -86,7 +86,36 @@ declare(strict_types=1);
 			$id_Mqtt_Spliiter_Instance = $this_Instance['ConnectionID'];				
 			$Mqtt_Spliiter_Instance = IPS_GetInstance($id_Mqtt_Spliiter_Instance);
 			IPS_SetName($id_Mqtt_Spliiter_Instance, 'EcoFlow Mqtt Client('. $this->InstanceID .')' );
-		
+
+			$UserName = $this->ReadAttributeString('Mqtt_UserName');
+			$PW = $this->ReadAttributeString('Mqtt_Password');
+
+			$SN = $this->GetValue('Seriennummer');
+			
+			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quota', 'Retain' => true,'QoS' => 0);
+			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'Retain' => true,'QoS' => 0);
+			//$t3 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/#', 'Retain' => true,'QoS' => 0);
+			
+			$Subscriptions = [$t1,  $t2];
+			$Subscriptions = json_encode($Subscriptions, 1);
+
+			$this->LogMessage('GetConfiguration ' . $Subscriptions , KL_NOTIFY);	
+			$ClientID = $this->ReadAttributeString("Mqtt_ClientID");
+
+
+			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, 
+			'{
+				"ClientID" => $ClientID,
+				"Password" => $PW,
+				"UserName" => $UserName,
+				"Retain" => true,
+				"Subscriptions" => $Subscriptions
+			}'); 
+
+			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
+
+
+
 
 			$this->LogMessage('Start Mqttsplitter ' . json_encode($Mqtt_Spliiter_Instance), KL_NOTIFY);
 
@@ -104,10 +133,11 @@ declare(strict_types=1);
 				"VerifyPeer":false}'); 
 
 			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
+
 			if ($result)
 			$this->LogMessage('Start MqttClient id ' . 'Erfolg', KL_NOTIFY);
 			else
-			$this->LogMessage('Start MqttClient id ' . 'M ist aber auch', KL_NOTIFY);	
+			$this->LogMessage('Start MqttClient id ' . 'Mist aber auch', KL_NOTIFY);	
 
 			$this->SetStatus(102); //actice
 			
