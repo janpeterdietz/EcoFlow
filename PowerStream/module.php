@@ -101,16 +101,14 @@ declare(strict_types=1);
 
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, 
 			'{
-				"ClientID" => $ClientID,
-				"Password" => $PW,
-				"UserName" => $UserName,
-				"Retain" => true,
-				"Subscriptions" => $Subscriptions
+				"ClientID" : $ClientID,
+				"Password" : $PW,
+				"UserName" : $UserName,
+				"Retain" : true,
+				"Subscriptions" : $Subscriptions
 			}'); 
 
 			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
-
-
 
 
 			$this->LogMessage('Start Mqttsplitter ' . json_encode($Mqtt_Spliiter_Instance), KL_NOTIFY);
