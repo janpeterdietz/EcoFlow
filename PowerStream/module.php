@@ -93,8 +93,6 @@ declare(strict_types=1);
 			$t1 =  '/open/'. $UserName. '/'. $SN .'/quota';
 			$t2 =  '/open/'. $UserName. '/'. $SN .'/status';
 			
-		
-			$this->LogMessage('GetConfiguration ' . $Subscriptions , KL_NOTIFY);	
 			$ClientID = $this->ReadAttributeString("Mqtt_ClientID");
 
 
