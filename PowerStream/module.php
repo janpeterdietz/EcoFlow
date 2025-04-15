@@ -105,16 +105,13 @@ declare(strict_types=1);
 				"Subscriptions":"[{\"Topic\":\"/open/'.$UserName.'/'.$SN.'/quota\",\"QoS\":0},{\"Topic\":\"/open/'.$UserName.'/'.$SN.'/status\",\"QoS\":0}]",
 				"UserName":"' 		.$UserName. '"}');
 				
-			/*
-			'{
-				"ClientID" :'. $ClientID . ',
-				"Password" :'. $PW . ',
-				"UserName" :'. $UserName .',
-				"Subscriptions" :'. $Subscriptions . ' 
-			}'); 
-			*/
+		
 
 			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
+			if ($result)
+			$this->LogMessage('Start MqttClient Splitter ' . 'Erfolg', KL_NOTIFY);
+			else
+			$this->LogMessage('Start MqttClient Splitter ' . 'Mist aber auch', KL_NOTIFY);	
 
 
 			$this->LogMessage('Start Mqttsplitter ' . json_encode($Mqtt_Spliiter_Instance), KL_NOTIFY);
@@ -135,13 +132,11 @@ declare(strict_types=1);
 			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 
 			if ($result)
-			$this->LogMessage('Start MqttClient id ' . 'Erfolg', KL_NOTIFY);
+			$this->LogMessage('Start MqttClient Socket ' . 'Erfolg', KL_NOTIFY);
 			else
-			$this->LogMessage('Start MqttClient id ' . 'Mist aber auch', KL_NOTIFY);	
+			$this->LogMessage('Start MqttClient Socket ' . 'Mist aber auch', KL_NOTIFY);	
 
 			$this->SetStatus(102); //actice
-			
-		
 		}
 
 		/*public function GetConfigurationForParent()
@@ -187,7 +182,7 @@ declare(strict_types=1);
 			$data = json_decode($JSONString, true);
 			if ($data === false)
 			{
-				IPS_LogMessage('Device RECV', 'Datenfehlerhaft');
+				$this->LogMessage('ReceiveData' . "Daten Fehlerhaft", KL_NOTIFY);
 			}
 
 			$Payload_params = json_decode($data['Payload'], true)['param'];
@@ -213,11 +208,11 @@ declare(strict_types=1);
 			//$this->LogMessage('UpdateConnect' . 'Status '. $currentStatus, KL_NOTIFY);
 
 			$MqttClientStatus = IPS_GetInstance($id_Mqtt_Client_Instance)['InstanceStatus'];
-			$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
-
+			
 			if ($MqttClientStatus >=200)
 			{
-				//$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
+				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
+
 			}
 
 			
