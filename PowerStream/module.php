@@ -144,7 +144,7 @@ declare(strict_types=1);
 				'Payload'          => ''
 			];
 
-			$this->Send(subscribe_data);
+			$this->Send($subscribe_data);
 
 		}
 
