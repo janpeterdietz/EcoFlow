@@ -99,13 +99,13 @@ declare(strict_types=1);
 			$this->LogMessage('Start MqttClient id ' . $id_Mqtt_Client_Instance, KL_NOTIFY);
 
 			
-			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
+			/*IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
 				"Host":"mqtt-e.ecoflow.com",
 				"Open":false,
 				"Port":8883,
 				"UseSSL":true,
 				"VerifyHost":true,
-				"VerifyPeer":false}');
+				"VerifyPeer":false}'); */
 
 			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 			if ($result)
@@ -150,20 +150,6 @@ declare(strict_types=1);
             return json_encode($settings, JSON_UNESCAPED_SLASHES);
         }
 		
-		/*
-		public function GetConfigurationForParent()
-        {
-			$settings = [
-          		"UseSSL"			=>true,
-		  		"VerifyHost"		=>false,
-				"VerifyPeer"		=>false,
-                'Host'              => 'mqtt-e.ecoflow.com',
-                'Port'              => 8883,
-				//"Open"			=> true
-            ];
-
-            return json_encode($settings, JSON_UNESCAPED_SLASHES);
-        }*/
 
 		public function Send(string $PayLoad)
 		{
