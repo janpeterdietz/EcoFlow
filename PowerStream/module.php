@@ -103,7 +103,7 @@ declare(strict_types=1);
 			'{	"ClientID":"' .$ClientID. '",
 				"Password":"' .$PW. '",
 				"Subscriptions":"[{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/quota\",\"QoS\":0},{\"Topic\":\"/open/open-24d53b742e4f42dd874174cbd1bf9717/HW51ZEH49G941031/status\",\"QoS\":0}]",
-				"UserName":"open-24d53b742e4f42dd874174cbd1bf9717"}');
+				"UserName":"' .$UserName. '"}');
 				
 			/*
 			'{
