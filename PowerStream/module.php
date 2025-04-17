@@ -23,6 +23,10 @@ declare(strict_types=1);
 			
 	
 			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
+			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
+			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
+
+
 			$this->RegisterVariableInteger("Status", "Status", "", 30) ;
 
 
@@ -203,17 +207,17 @@ declare(strict_types=1);
 				$this->LogMessage('ReceiveData' . "Daten Fehlerhaft", KL_NOTIFY);
 			}
 
-			$Payload_params = json_decode($data['Payload'], true)['param'];
+			$Payload = json_decode($data['Payload'], true);
 
 			//$this->SendDebug(__FUNCTION__, 'Daten Empfnagen: ' . $JSONString, 0);
-			if (array_key_exists('invOutputWatts', $Payload_params))
+			if (array_key_exists('invOutputWatts', $Payload['param']['invOutputWatts']))
 			{
-            	$this->setvalue("OutputWatts", intval($Payload_params['invOutputWatts'])/10);
+            	$this->setvalue("OutputWatts", intval($Payload['param']['invOutputWatts'])/10);
 			}
 
-			if (array_key_exists('Status', $Payload_params))
+			if (array_key_exists('Status', $Payload['params']['Status']))
 			{
-            	$this->setvalue("Status", $Payload_params['Status']);
+            	$this->setvalue("Status", $Payload['Status']);
 			}
 		}
 
