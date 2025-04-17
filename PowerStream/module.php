@@ -217,7 +217,7 @@ declare(strict_types=1);
 
 			if (array_key_exists('Status', $Payload['params']['Status']))
 			{
-            	$this->setvalue("Status", $Payload['Status']);
+            	$this->setvalue("Status", $$Payload['params']['Status']);
 			}
 		}
 
