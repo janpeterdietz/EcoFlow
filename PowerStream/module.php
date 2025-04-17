@@ -216,17 +216,17 @@ declare(strict_types=1);
 				$Payload = $Payload['param'];
 				if (array_key_exists('invOutputWatts', $Payload))
 				{
-					$this->setvalue("OutputWatts", intval($PayLoad['invOutputWatts'])/10);
+					$this->setvalue("OutputWatts", intval($Payload['invOutputWatts'])/10);
 				}
 
 				if (array_key_exists('pv1InputWatts', $Payload))
 				{
-					$this->setvalue("pv1InputWatts", intval($PayLoad['pv1InputWatts'])/10);
+					$this->setvalue("pv1InputWatts", intval($Payload['pv1InputWatts'])/10);
 				}
 				
 				if (array_key_exists('pv2InputWatts', $Payload))
 				{
-					$this->setvalue("pv2InputWatts", intval($PayLoad['pv2InputWatts'])/10);
+					$this->setvalue("pv2InputWatts", intval($Payload['pv2InputWatts'])/10);
 				}
 				
 			}
