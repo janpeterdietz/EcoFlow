@@ -22,8 +22,8 @@ declare(strict_types=1);
 			$this->RegisterAttributeString("Mqtt_ClientID", "");
 			
 	
-			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
-			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
+			$this->RegisterVariableInteger("pv1InputWatts", "pv1InputWatts", "", 30) ;
+			$this->RegisterVariableInteger("pv2InputWatts", "pv2InputWatts", "", 30) ;
 			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
 
 
@@ -216,6 +216,17 @@ declare(strict_types=1);
 				{
 					$this->setvalue("OutputWatts", intval($PayLoad['invOutputWatts'])/10);
 				}
+
+				if (array_key_exists('pv1InputWatts', $Payload))
+				{
+					$this->setvalue("pv1InputWatts", intval($PayLoad['pv1InputWatts'])/10);
+				}
+				
+				if (array_key_exists('pv2InputWatts', $Payload))
+				{
+					$this->setvalue("pv2InputWatts", intval($PayLoad['pv2InputWatts'])/10);
+				}
+				
 			}
 
 			if (array_key_exists('params', $Payload))
