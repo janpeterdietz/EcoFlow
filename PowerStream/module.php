@@ -209,15 +209,23 @@ declare(strict_types=1);
 
 			$Payload = json_decode($data['Payload'], true);
 
-			//$this->SendDebug(__FUNCTION__, 'Daten Empfnagen: ' . $JSONString, 0);
-			if (array_key_exists('invOutputWatts', $Payload['param']))
+			if (array_key_exists('param', $Payload))
 			{
-            	$this->setvalue("OutputWatts", intval($Payload['param']['invOutputWatts'])/10);
+				$Payload = $Payload['param'];
+				if (array_key_exists('invOutputWatts', $Payload))
+				{
+					$this->setvalue("OutputWatts", intval($PayLoad['invOutputWatts'])/10);
+				}
 			}
 
-			if (array_key_exists('Status', $Payload['params']))
+			if (array_key_exists('params', $Payload))
 			{
-            	$this->setvalue("Status", $$Payload['params']['Status']);
+				$Payload = $Payload['params'];
+		
+				if (array_key_exists('Status', $Payload))
+				{
+					$this->setvalue("Status", $$Payload['Status']);
+				}
 			}
 		}
 
