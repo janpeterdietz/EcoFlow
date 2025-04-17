@@ -210,12 +210,12 @@ declare(strict_types=1);
 			$Payload = json_decode($data['Payload'], true);
 
 			//$this->SendDebug(__FUNCTION__, 'Daten Empfnagen: ' . $JSONString, 0);
-			if (array_key_exists('invOutputWatts', $Payload['param']['invOutputWatts']))
+			if (array_key_exists('invOutputWatts', $Payload['param']))
 			{
             	$this->setvalue("OutputWatts", intval($Payload['param']['invOutputWatts'])/10);
 			}
 
-			if (array_key_exists('Status', $Payload['params']['Status']))
+			if (array_key_exists('Status', $Payload['params']))
 			{
             	$this->setvalue("Status", $$Payload['params']['Status']);
 			}
