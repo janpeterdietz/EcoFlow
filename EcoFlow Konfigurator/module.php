@@ -27,6 +27,9 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::ApplyChanges();
 
+			$filter .= '.*' . '"' . "Konfiguration". '"'. '.*';
+			$this->SetReceiveDataFilter($filter);
+
 			$accessKey = $this->ReadPropertyString("accessKey");
 			$secretKey = $this->ReadPropertyString("secretKey");
 	

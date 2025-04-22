@@ -59,9 +59,9 @@ declare(strict_types=1);
 				return;
 			} 
 			$this->SetStatus(104); //noch inaktiv
-
-		
-
+			
+			$filter .= '.*' . '"' . $SN. '"'. '.*';
+			$this->SetReceiveDataFilter($filter);
 
 			
 			$response = $this->getMQTTCertification();
