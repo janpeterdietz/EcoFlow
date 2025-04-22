@@ -27,7 +27,7 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::ApplyChanges();
 
-			$filter .= '.*' . '"' . "Konfiguration". '"'. '.*';
+			$filter = '.*' . '"' . "Konfiguration". '"'. '.*';
 			$this->SetReceiveDataFilter($filter);
 
 			$accessKey = $this->ReadPropertyString("accessKey");
@@ -57,7 +57,7 @@ declare(strict_types=1);
 			$this->WriteAttributeString("Mqtt_Password", $response['data']['certificatePassword']);
 			$this->WriteAttributeString("Mqtt_UserName", $response['data']['certificateAccount']);
 			
-			$this->SetStatus(102); //noch inaktiv
+			$this->SetStatus(102); //aktiv
 
 		}
 

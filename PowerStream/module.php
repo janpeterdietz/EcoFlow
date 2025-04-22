@@ -60,7 +60,7 @@ declare(strict_types=1);
 			} 
 			$this->SetStatus(104); //noch inaktiv
 			
-			$filter .= '.*' . '"' . $SN. '"'. '.*';
+			$filter = '.*' . '"' . $SN. '"'. '.*';
 			$this->SetReceiveDataFilter($filter);
 
 			
@@ -273,6 +273,7 @@ declare(strict_types=1);
 			{
 				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
 				$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
+
 				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
 			}
 
