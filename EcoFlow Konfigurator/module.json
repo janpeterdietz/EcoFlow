@@ -1,16 +1,15 @@
 {
-    "id": "{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}",
-    "name": "PowerStream",
-    "type": 3,
+    "id": "{F2627278-768F-71A4-2E1D-1127EC9D3D39}",
+    "name": "EcoFlow Konfigurator",
+    "type": 4,
     "vendor": "EcoFlow",
     "aliases": [],
     "parentRequirements": [
         "{018EF6B5-AB94-40C6-AA53-46943E824ACF}"
     ],
     "childRequirements": [],
-    "implemented": [
-        "{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}"
-    ],
+    "implemented":     "{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}"
+],
     "prefix": "EF",
     "url": ""
 }

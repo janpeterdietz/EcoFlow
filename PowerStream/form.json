@@ -1,7 +1,10 @@
 {
     "elements": [
         { "type": "ValidationTextBox", "name": "accessKey", "caption": "Access Key" },
-        { "type": "PasswordTextBox", "name": "secretKey", "caption": "secret Key" }
+        { "type": "PasswordTextBox", "name": "secretKey", "caption": "secret Key" },
+        { "type": "ValidationTextBox", "name": "deviceName", "caption": "deviceName" },
+        { "type": "ValidationTextBox", "name": "Seriennummer", "caption": "Seriennummer" }
+        
     ], 
     "actions": [],
     "status": []

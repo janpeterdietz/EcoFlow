@@ -1,41 +1,19 @@
 <?php
 
 declare(strict_types=1);
-	class PowerStream extends IPSModule
+	class EcoFlowKonfigurator extends IPSModule
 	{
 		public function Create()
 		{
 			//Never delete this line!
 			parent::Create();
 
-			$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
-			
 			$this->RegisterPropertyString("accessKey", "");
 			$this->RegisterPropertyString("secretKey", "");
 
-			$this->RegisterPropertyString ("deviceName", "") ;
-			$this->RegisterPropertyString ("Seriennummer", "") ;
-		
 			$this->RegisterAttributeString("Mqtt_Password", "");
 			$this->RegisterAttributeString("Mqtt_UserName", "");
 			$this->RegisterAttributeString("Mqtt_ClientID", "");
-			
-			$this->RegisterVariableInteger("pv1InputWatts", "pv1InputWatts", "", 30) ;
-			$this->RegisterVariableInteger("pv2InputWatts", "pv2InputWatts", "", 30) ;
-			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
-
-			$this->RegisterVariableInteger("LastUpdateTime", "Lezte Update", "~UnixTimestamp", 5) ;
-			$this->RegisterVariableInteger("invStatue", "inverter Status", "", 6) ;
-
-			
-			//Micro-inverter INV operating status: 1: IDEL; 2: START; ...check inv_logic; 6: successful grid connection
-			
-
-			$this->RegisterVariableInteger("Status", "Status", "", 30) ;
-
-
-			$this->RegisterTimer("UpdateConnect", 20*1000, 'ECOFLOW_UpdateConnect(' . $this->InstanceID . ');');
-			
 		}
 
 		public function Destroy()
@@ -48,28 +26,24 @@ declare(strict_types=1);
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
+
 			$accessKey = $this->ReadPropertyString("accessKey");
 			$secretKey = $this->ReadPropertyString("secretKey");
-			$SN = $this->ReadPropertyString('Seriennummer');
 	
 
-			if ( ($accessKey == '') || ($secretKey == '') || ($SN == '') ) 
+			if ( ($accessKey == '') || ($secretKey == '')) 
 			{
 				$this->SetStatus(200); //One of the Variable is missing
 				return;
 			} 
 			$this->SetStatus(104); //noch inaktiv
 
-		
-
-
+			
+			$response = $this->deviceList();
+			$this->WriteAttributeString("Mqtt_ClientID", substr( $response['eagleEyeTraceId'], 0, 22));
+			
 			
 			$response = $this->getMQTTCertification();
-
-			$this->WriteAttributeString("Mqtt_ClientID", substr( $response['eagleEyeTraceId'], 0, 21));
-			$ClientID = $this->ReadAttributeString("Mqtt_ClientID");
-
-	
 			if ($response['message'] != 'Success')
 			{
 				$this->SetStatus(200); //One of the Variable is missing
@@ -80,215 +54,177 @@ declare(strict_types=1);
 			$this->WriteAttributeString("Mqtt_Password", $response['data']['certificatePassword']);
 			$this->WriteAttributeString("Mqtt_UserName", $response['data']['certificateAccount']);
 			
-
-			//$config = json_decode( $this->GetConfigurationForParent(), true);
-		
-			$this_Instance = IPS_GetInstance($this->InstanceID);
-			$id_Mqtt_Spliiter_Instance = $this_Instance['ConnectionID'];				
-			$Mqtt_Spliiter_Instance = IPS_GetInstance($id_Mqtt_Spliiter_Instance);
-			IPS_SetName($id_Mqtt_Spliiter_Instance, 'EcoFlow Mqtt Client('. $this->InstanceID .')' );
-
-			$UserName = $this->ReadAttributeString('Mqtt_UserName');
-			$PW = $this->ReadAttributeString('Mqtt_Password');
-			
-			
-			$t1 =  '/open/'. $UserName. '/'. $SN .'/quota';
-			$t2 =  '/open/'. $UserName. '/'. $SN .'/status';
-			
-			
-
-			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, 
-			'{	
-				"ClientID":"' 		.$ClientID. '",
-				"Password":"' 		.$PW. '",
-				"UserName":"' 		.$UserName. '",
-				"Subscriptions":"[{\"Topic\":\"'.$t1.'\",\"QoS\":0},{\"Topic\":\"'.$t2.'\",\"QoS\":0}]"
-			}'); 
-		
-			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
-
-			if ($result)
-			$this->LogMessage('Start MqttClient Splitter ' . 'Erfolg', KL_NOTIFY);
-			else
-			$this->LogMessage('Start MqttClient Splitter ' . 'Mist aber auch', KL_NOTIFY);	
-			
-			$this->LogMessage('Start Mqttsplitter ' . json_encode($Mqtt_Spliiter_Instance), KL_NOTIFY);
-
-
-			$id_Mqtt_Client_Instance = $Mqtt_Spliiter_Instance['ConnectionID'];
-			IPS_SetName($id_Mqtt_Client_Instance, 'EcoFlow Mqtt Client Socket('. $id_Mqtt_Spliiter_Instance .')' );
-			$this->LogMessage('Start MqttClient id ' . $id_Mqtt_Client_Instance, KL_NOTIFY);
-
-			
-			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
-				"Host":"mqtt-e.ecoflow.com",
-				"Open":true,
-				"Port":8883,
-				"UseSSL":true,
-				"VerifyHost":true,
-				"VerifyPeer":false}'); 
-
-			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
-
-			if ($result)
-			$this->LogMessage('Start MqttClient Socket ' . 'Erfolg', KL_NOTIFY);
-			else
-			$this->LogMessage('Start MqttClient Socket ' . 'Mist aber auch', KL_NOTIFY);	
-
-			$this->SetStatus(102); //actice
-
-			$subscribe_data = [
-				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-				'PacketType'       => 8,
-				'QualityOfService' => 0,
-				'Retain'           => true,
-				'Topic'            => $t1,
-				'Payload'          => ''
-			];
-
-			$this->Send($subscribe_data);	
-
-			$subscribe_data = [
-				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-				'PacketType'       => 8,
-				'QualityOfService' => 0,
-				'Retain'           => true,
-				'Topic'            => $t2,
-				'Payload'          => ''
-			];
-
-			$this->Send($subscribe_data);	
-		
+			$this->SetStatus(102); //noch inaktiv
 
 		}
-/*
-		public function GetConfigurationForParent()
-        {
-			$UserName = $this->ReadAttributeString('Mqtt_UserName');
-			$PW = $this->ReadAttributeString('Mqtt_Password');
 
-			$SN = $this->GetValue('Seriennummer');
-			
-			$t1 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/quota', 'Retain' => true,'QoS' => 0);
-			$t2 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/status', 'Retain' => true,'QoS' => 0);
-			//$t3 = array('Topic' => '/open/'. $UserName. '/'. $SN .'/#', 'Retain' => true,'QoS' => 0);
-			
-			$Subscriptions = [$t1,  $t2];
-			$Subscriptions = json_encode($Subscriptions, 1);
+		public function GetConfigurationForm()
+		{	
+			$accessKey = $this->ReadPropertyString('accessKey');
+			$secretKey = $this->ReadPropertyString('secretKey');
 
-			$this->LogMessage('GetConfiguration ' . $Subscriptions , KL_NOTIFY);	
-			$ClientID = $this->ReadAttributeString("Mqtt_ClientID");
-		
-
-			
-			$settings = [
-				"ClientID" => $ClientID,
-				"Password" => $PW,
-				"UserName" => $UserName,
-				"Retain" => true,
-				"Subscriptions" => $Subscriptions
-            ];
-
-            return json_encode($settings, JSON_UNESCAPED_SLASHES);
-        }
-*/		
-
-		public function Send(array $PayLoad)
-		{
-			$this->SendDataToParent(json_encode($PayLoad));
-		}
-		
-
-		public function ReceiveData($JSONString)
-		{
-			$data = json_decode($JSONString, true);
-			if ($data === false)
+			if ( ($accessKey == '') || ($secretKey == '')) 
 			{
-				$this->LogMessage('ReceiveData' . "Daten Fehlerhaft", KL_NOTIFY);
-			}
+				$this->SetStatus(200); //One of the Variable is missing
+				return;
+			} 
+			$newdevices = $this->deviceList()['data'];
 
-			$Payload = json_decode($data['Payload'], true);
-			//$this->LogMessage('ReceiveData' . print_r($Payload, true), KL_NOTIFY);
+		
 			
+			//print_r($newdevices);
 
-			if (array_key_exists('param', $Payload))
+			$availableDevices = [];
+			$count = 0;
+
+			foreach($newdevices as $key => $device)
 			{
+				//print_r($device);
+				$availableDevices[$count] = 
+					[
+						'name' =>  $device['deviceName'],
+						'productName' =>  $device['productName'],
+						'Seriennummer' => $device['sn'],
+
+						'InstanzID' => '0',
+						['EcoFlow_Data'],		
+							'create' => [	
+								'moduleID' => '{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}',
+								'configuration' => [ "accessKey" 			=> $accessKey,
+													  "secretKey" 			=> $secretKey,
+													  "Seriennummer"		=> $device['sn'],
+													  "deviceName"			=> $device['productName']
+														  ]
+							]
+
+					];
+				$count = $count+1;
+
+				$no_new_devices = $count; 
+				$lostDevices = [];
+				$count = 0;
 				
-				$Payload = $Payload['param'];
-
-
-				if (array_key_exists('utcTime', $Payload))
-				{
-					$this->setvalue("LastUpdateTime", $Payload['utcTime']);
-				}
-
-				if (array_key_exists('invStatue', $Payload))
-				{
-					$this->setvalue("invStatue", $Payload['invStatue']);
-				}
-
-				if (array_key_exists('invOutputWatts', $Payload))
-				{
-					$this->setvalue("OutputWatts", intval($Payload['invOutputWatts'])/10);
-				}
-
-				if (array_key_exists('pv1InputWatts', $Payload))
-				{
-					$this->setvalue("pv1InputWatts", intval($Payload['pv1InputWatts'])/10);
-				}
+				//print_r($availableDevices);
 				
-				if (array_key_exists('pv2InputWatts', $Payload))
+				foreach (IPS_GetInstanceListByModuleID('{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}') as $instanceID)
 				{
-					$this->setvalue("pv2InputWatts", intval($Payload['pv2InputWatts'])/10);
-				}
+					
+					$instance_match = false;
+					// schon verhandenes Gerät
+					foreach($availableDevices as  $key => $device)
+					{	
+						if  ( $availableDevices[$key]['Seriennummer'] == IPS_GetProperty($instanceID,'Seriennummer') )
+						{
+							$availableDevices[$key]['instanceID'] = $instanceID;
+							$availableDevices[$key]['deviceName'] = IPS_GetProperty($instanceID,'deviceName' );
+							$availableDevices[$key]['name'] = IPS_GetName($instanceID);	
+							$instance_match = true;
+						}
+					}
 				
-			}
-
-			if (array_key_exists('params', $Payload))
-			{
-				$Payload = $Payload['params'];
-				if (array_key_exists('Status', $Payload))
-				{
-					$this->setvalue("Status", $$Payload['Status']);
+					if (!$instance_match) // neues Geräte
+					{
+						//$availableDevices[$key]['productName'] = IPS_GetProperty($instanceID,'productName' );
+						$availableDevices[$key]['name'] = IPS_GetName($instanceID);	
+						$count = $count +1;
+					}
 				}
-			}
-		}
+					
 
-		public function UpdateConnect()
-		{
-			$this_Instance = IPS_GetInstance($this->InstanceID);
-			$id_Mqtt_Spliiter_Instance = $this_Instance['ConnectionID'];
-			$Mqtt_Spliiter_Instance = IPS_GetInstance($id_Mqtt_Spliiter_Instance);
 
-			$id_Mqtt_Client_Instance = $Mqtt_Spliiter_Instance['ConnectionID'];
-			//$this->LogMessage('Start MqttClient id ' . $id_Mqtt_Client_Instance, KL_NOTIFY);
-
-			
-			//$currentStatus = $this->GetStatus();
-			//$this->LogMessage('UpdateConnect' . 'Status '. $currentStatus, KL_NOTIFY);
-
-			$MqttClientStatus = IPS_GetInstance($id_Mqtt_Client_Instance)['InstanceStatus'];
-			
-			if ($MqttClientStatus >=200)
-			{
-				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
-				$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
-				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
 			}
 
-			
-		}
-
-
-		public function getMQTTCertification() 
+		$no_new_devices = $count; 
+	
+		if (count($availableDevices) == 0)
 		{
+			$availableDevices[0]['name'] = 'no devices found';	
+		}
 			
+
+		return json_encode([
+	
+			"elements"=> [
+				[ 
+					"type"=> "ValidationTextBox", 
+				 	"name"=> "accessKey", 
+				 	"caption"=> "Access Key" 
+				],
+				[ 	"type"=> "PasswordTextBox", 
+					"name"=> "secretKey", 
+					"caption"=> "Secret Key" 
+				]
+				
+			], 
+
+			"actions" => [
+				[
+					'type' => 'Configurator', 
+					'caption'=> 'EcoFlow Konfigurator',
+					'delete' => true,
+					'columns' => [
+							[
+								'name' => 'name',
+								'caption' => 'Name',
+								'width' => 'auto'
+							],
+							[
+								'name' => 'productName',
+								'caption' => 'productName',
+								'width' => '200px'
+							],
+							[
+								'name' => 'Seriennummer',
+								'caption' => 'Seriennummer',
+								'width' => '300px'
+							]
+		
+					],
+					'values' => $availableDevices
+				]
+			]
+		]);
+	}
+
+
+		public function deviceList() 
+		{
 			$HOST = "https://api-e.ecoflow.com";
 			$GET_MQTT_CERTIFICATION_URL = $HOST . "/iot-open/sign/certification";
 			$DEVICE_LIST_URL = $HOST . "/iot-open/sign/device/list";
 			$SET_QUOTA_URL = $HOST . "/iot-open/sign/device/quota";
 			$GET_QUOTA_URL = $HOST . "/iot-open/sign/device/quota";
 			$GET_ALL_QUOTA_URL = $HOST . "/iot-open/sign/device/quota/all";
+		
+			$url = $DEVICE_LIST_URL;
+
+			$accessKey = $this->ReadPropertyString("accessKey");
+			$secretKey = $this->ReadPropertyString("secretKey");
+
+			$jsonObject = [];
+			$response = $this->getHttpUriRequest("GET", $url, $jsonObject, $accessKey, $secretKey);
+			
+			$this->SendDebug(__FUNCTION__, 'deviceList: ' . json_encode($response), 0);
+        
+			
+			if ($response['code'] === '0') 
+			{
+				$data = $response;
+				return $data;
+			}
+			//	throw new RuntimeException('Error getting deviceList: ' . $response['message']);
+		}
+
+
+		public function getMQTTCertification() 
+		{
+			$HOST = "https://api-e.ecoflow.com";
+			$GET_MQTT_CERTIFICATION_URL = $HOST . "/iot-open/sign/certification";
+			$DEVICE_LIST_URL = $HOST . "/iot-open/sign/device/list";
+			$SET_QUOTA_URL = $HOST . "/iot-open/sign/device/quota";
+			$GET_QUOTA_URL = $HOST . "/iot-open/sign/device/quota";
+			$GET_ALL_QUOTA_URL = $HOST . "/iot-open/sign/device/quota/all";
+
 			$accessKey = $this->ReadPropertyString("accessKey");
 			$secretKey = $this->ReadPropertyString("secretKey");
 			
