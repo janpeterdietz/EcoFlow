@@ -8,7 +8,7 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::Create();
 
-			$this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
+			$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
 			
 			$this->RegisterPropertyString("accessKey", "");
 			$this->RegisterPropertyString("secretKey", "");
@@ -24,7 +24,7 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("pv2InputWatts", "pv2InputWatts", "", 30) ;
 			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
 
-			$this->RegisterVariableInteger("LastUpdateTime", "Lezte Update", "~UnixTimestamp", 5) ;
+			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
 			$this->RegisterVariableInteger("invStatue", "inverter Status", "", 6) ;
 
 			
@@ -34,7 +34,7 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("Status", "Status", "", 30) ;
 
 
-			//$this->RegisterTimer("UpdateConnect", 20*1000, 'EF_UpdateConnect(' . $this->InstanceID . ');');
+			$this->RegisterTimer("UpdateConnect", 60*1000, 'EF_UpdateConnect(' . $this->InstanceID . ');');
 			
 		}
 
@@ -103,7 +103,10 @@ declare(strict_types=1);
 				"Password":"' 		.$PW. '",
 				"UserName":"' 		.$UserName. '",
 				"Subscriptions":"[{\"Topic\":\"'.$t1.'\",\"QoS\":0},{\"Topic\":\"'.$t2.'\",\"QoS\":0}]"
+		
 			}'); 
+		
+			
 		
 			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
 
@@ -137,27 +140,10 @@ declare(strict_types=1);
 
 			$this->SetStatus(102); //actice
 
-			$subscribe_data = [
-				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-				'PacketType'       => 8,
-				'QualityOfService' => 0,
-				'Retain'           => true,
-				'Topic'            => $t1,
-				'Payload'          => ''
-			];
+			IPS_Sleep(10 *1000);
 
-			$this->Send($subscribe_data);	
 
-			$subscribe_data = [
-				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-				'PacketType'       => 8,
-				'QualityOfService' => 0,
-				'Retain'           => true,
-				'Topic'            => $t2,
-				'Payload'          => ''
-			];
 
-			$this->Send($subscribe_data);	
 		
 
 
@@ -190,6 +176,39 @@ declare(strict_types=1);
 			}
 		}
 
+		public function test()
+		{
+			$UserName = $this->ReadAttributeString('Mqtt_UserName');
+			$PW = $this->ReadAttributeString('Mqtt_Password');
+			$SN = $this->ReadPropertyString('Seriennummer');		
+			
+			$t1 =  '/open/'. $UserName. '/'. $SN .'/quota';
+			$t2 =  '/open/'. $UserName. '/'. $SN .'/status';
+			
+
+			$subscribe_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 8,
+				'QualityOfService' => 0,
+				'Retain'           => true,
+				'Topic'            => $t1,
+				'Payload'          => ''
+			];
+
+			$this->Send($subscribe_data);	
+
+			$subscribe_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 8,
+				'QualityOfService' => 0,
+				'Retain'           => true,
+				'Topic'            => $t2,
+				'Payload'          => ''
+			];
+
+			$this->Send($subscribe_data);	
+		}
+		
 /*
 		public function GetConfigurationForParent()
         {

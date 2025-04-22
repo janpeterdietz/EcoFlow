@@ -6,6 +6,8 @@
         { "type": "ValidationTextBox", "name": "Seriennummer", "caption": "Seriennummer" }
         
     ], 
-    "actions": [],
+    "actions": [
+        { "type": "Button", "label": "Send Message", "onClick": "EF_test($id);" }
+    ],
     "status": []
 }

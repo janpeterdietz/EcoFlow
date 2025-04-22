@@ -8,7 +8,7 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::Create();
 			
-			$this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
+			//$this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
 		
 			$this->RegisterPropertyString("accessKey", "");
 			$this->RegisterPropertyString("secretKey", "");
