@@ -34,7 +34,7 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("Status", "Status", "", 30) ;
 
 
-			$this->RegisterTimer("UpdateConnect", 20*1000, 'ECOFLOW_UpdateConnect(' . $this->InstanceID . ');');
+			$this->RegisterTimer("UpdateConnect", 20*1000, 'EF_UpdateConnect(' . $this->InstanceID . ');');
 			
 		}
 
