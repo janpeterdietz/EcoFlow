@@ -160,7 +160,36 @@ declare(strict_types=1);
 			$this->Send($subscribe_data);	
 		
 
+
+			// Reaktion auf Statusänderung des Sockets
+			//Unregister all messages
+        	foreach ($this->GetMessageList() as $senderID => $messages) 
+			{
+            	foreach ($messages as $message) 
+				{
+                	$this->UnregisterMessage($senderID, $message);
+            	}
+        	}
+
+			$this_Instance = IPS_GetInstance($this->InstanceID);
+			$id_Mqtt_Spliiter_Instance = $this_Instance['ConnectionID'];
+			$Mqtt_Spliiter_Instance = IPS_GetInstance($id_Mqtt_Spliiter_Instance);
+			$id_Mqtt_Client_Instance = $Mqtt_Spliiter_Instance['ConnectionID'];
+
+		
+			$this->RegisterMessage($id_Mqtt_Client_Instance, IM_CHANGESTATUS);
 		}
+
+		public function MessageSink($TimeStamp, $SenderID, $Message, $Data)
+		{
+			$this->SendDebug('Sender ' . $SenderID, 'Message ' . $Message, 0);
+			if ($Message === IM_CHANGESTATUS) 
+			{
+				$MqttClientStatus = IPS_GetInstance($SenderID)['InstanceStatus'];
+				$this->LogMessage('Status MQTT Client ' . $MqttClientStatus , KL_NOTIFY);	
+			}
+		}
+
 /*
 		public function GetConfigurationForParent()
         {
@@ -261,11 +290,6 @@ declare(strict_types=1);
 			$Mqtt_Spliiter_Instance = IPS_GetInstance($id_Mqtt_Spliiter_Instance);
 
 			$id_Mqtt_Client_Instance = $Mqtt_Spliiter_Instance['ConnectionID'];
-			//$this->LogMessage('Start MqttClient id ' . $id_Mqtt_Client_Instance, KL_NOTIFY);
-
-			
-			//$currentStatus = $this->GetStatus();
-			//$this->LogMessage('UpdateConnect' . 'Status '. $currentStatus, KL_NOTIFY);
 
 			$MqttClientStatus = IPS_GetInstance($id_Mqtt_Client_Instance)['InstanceStatus'];
 			
