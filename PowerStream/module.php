@@ -8,7 +8,7 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::Create();
 
-			$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
+			$this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
 			
 			$this->RegisterPropertyString("accessKey", "");
 			$this->RegisterPropertyString("secretKey", "");
@@ -34,7 +34,7 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("Status", "Status", "", 30) ;
 
 
-			$this->RegisterTimer("UpdateConnect", 20*1000, 'EF_UpdateConnect(' . $this->InstanceID . ');');
+			//$this->RegisterTimer("UpdateConnect", 20*1000, 'EF_UpdateConnect(' . $this->InstanceID . ');');
 			
 		}
 
@@ -285,22 +285,6 @@ declare(strict_types=1);
 
 		public function UpdateConnect()
 		{
-			$this_Instance = IPS_GetInstance($this->InstanceID);
-			$id_Mqtt_Spliiter_Instance = $this_Instance['ConnectionID'];
-			$Mqtt_Spliiter_Instance = IPS_GetInstance($id_Mqtt_Spliiter_Instance);
-
-			$id_Mqtt_Client_Instance = $Mqtt_Spliiter_Instance['ConnectionID'];
-
-			$MqttClientStatus = IPS_GetInstance($id_Mqtt_Client_Instance)['InstanceStatus'];
-			
-			if ($MqttClientStatus >=200)
-			{
-				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
-				$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
-
-				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
-			}
-
 			
 		}
 
