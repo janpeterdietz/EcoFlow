@@ -34,7 +34,7 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("Status", "Status", "", 30) ;
 
 
-			$this->RegisterTimer("UpdateConnect", 20*1000, 'EF_UpdateConnect(' . $this->InstanceID . ');');
+			$this->RegisterTimer("UpdateConnect", 0, 'EF_UpdateConnect(' . $this->InstanceID . ');');
 			
 		}
 
@@ -186,7 +186,15 @@ declare(strict_types=1);
 			if ($Message === IM_CHANGESTATUS) 
 			{
 				$MqttClientStatus = IPS_GetInstance($SenderID)['InstanceStatus'];
-				$this->LogMessage('Status MQTT Client ' . $MqttClientStatus , KL_NOTIFY);	
+				$this->LogMessage('Status MQTT Client ' . $MqttClientStatus , KL_NOTIFY);
+				if (MqttClientStatus >= 200)
+				{
+					SetTimerInterval("UpdateConnect, 60");
+				}
+				else
+				{
+					SetTimerInterval("UpdateConnect, 0");
+				}
 			}
 		}
 
@@ -295,13 +303,9 @@ declare(strict_types=1);
 			
 			if ($MqttClientStatus >=200)
 			{
-				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
+				//$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
 				$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
-
-				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
 			}
-
-			
 		}
 
 
