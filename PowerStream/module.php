@@ -187,7 +187,7 @@ declare(strict_types=1);
 			{
 				$MqttClientStatus = IPS_GetInstance($SenderID)['InstanceStatus'];
 				$this->LogMessage('Status MQTT Client ' . $MqttClientStatus , KL_NOTIFY);
-				if (MqttClientStatus >= 200)
+				if ($MqttClientStatus >= 200)
 				{
 					SetTimerInterval("UpdateConnect, 60");
 				}
