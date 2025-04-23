@@ -303,8 +303,8 @@ declare(strict_types=1);
 			
 			if ($MqttClientStatus >=200)
 			{
-				//$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
-				$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
+				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
+				//$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 			}
 		}
 
