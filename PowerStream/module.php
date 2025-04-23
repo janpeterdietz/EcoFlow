@@ -189,11 +189,11 @@ declare(strict_types=1);
 				$this->LogMessage('Status MQTT Client ' . $MqttClientStatus , KL_NOTIFY);
 				if ($MqttClientStatus >= 200)
 				{
-					SetTimerInterval("UpdateConnect, 60");
+					$this->SetTimerInterval("UpdateConnect, 60");
 				}
 				else
 				{
-					SetTimerInterval("UpdateConnect, 0");
+					$this->SetTimerInterval("UpdateConnect, 0");
 				}
 			}
 		}
