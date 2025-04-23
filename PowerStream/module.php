@@ -79,7 +79,8 @@ declare(strict_types=1);
 
 			$this->WriteAttributeString("Mqtt_Password", $response['data']['certificatePassword']);
 			$this->WriteAttributeString("Mqtt_UserName", $response['data']['certificateAccount']);
-			
+			$mqtt_url = $response['data']['url'];
+			$mqtt_port =$response['data']['port'];
 
 			//$config = json_decode( $this->GetConfigurationForParent(), true);
 		
@@ -90,6 +91,10 @@ declare(strict_types=1);
 
 			$UserName = $this->ReadAttributeString('Mqtt_UserName');
 			$PW = $this->ReadAttributeString('Mqtt_Password');
+
+			
+
+
 			
 			
 			$t1 =  '/open/'. $UserName. '/'. $SN .'/quota';
@@ -121,9 +126,9 @@ declare(strict_types=1);
 
 			
 			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
-				"Host":"mqtt-e.ecoflow.com",
+				"Host":"'.$mqtt_url.'",
 				"Open":true,
-				"Port":8883,
+				"Port":'.$mqtt_port.',
 				"UseSSL":true,
 				"VerifyHost":true,
 				"VerifyPeer":false}'); 
