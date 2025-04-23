@@ -34,7 +34,7 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("Status", "Status", "", 30) ;
 
 
-			$this->RegisterTimer("UpdateConnect", 60*1000, 'EF_UpdateConnect(' . $this->InstanceID . ');');
+			$this->RegisterTimer("UpdateConnect", 0, 'EF_UpdateConnect(' . $this->InstanceID . ');');
 			
 		}
 
@@ -79,7 +79,8 @@ declare(strict_types=1);
 
 			$this->WriteAttributeString("Mqtt_Password", $response['data']['certificatePassword']);
 			$this->WriteAttributeString("Mqtt_UserName", $response['data']['certificateAccount']);
-			
+			$mqtt_url 	= $response['data']['url'];
+			$mqtt_port 	= $response['data']['port'];
 
 			//$config = json_decode( $this->GetConfigurationForParent(), true);
 		
@@ -91,20 +92,24 @@ declare(strict_types=1);
 			$UserName = $this->ReadAttributeString('Mqtt_UserName');
 			$PW = $this->ReadAttributeString('Mqtt_Password');
 			
-			
 			$t1 =  '/open/'. $UserName. '/'. $SN .'/quota';
 			$t2 =  '/open/'. $UserName. '/'. $SN .'/status';
-			
-			
 
-			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, 
-			'{	
-				"ClientID":"' 		.$ClientID. '",
-				"Password":"' 		.$PW. '",
-				"UserName":"' 		.$UserName. '",
-				"Subscriptions":"[{\"Topic\":\"'.$t1.'\",\"QoS\":0},{\"Topic\":\"'.$t2.'\",\"QoS\":0}]"
-		
-			}'); 
+			$t1_full = array('Topic' => $t1, 'QoS' => 0);
+			$t2_full = array('Topic' => $t2, 'QoS' => 0);
+
+			$Subscriptions = array($t1_full, $t2_full);
+			$Subscriptions_str = json_encode($Subscriptions,JSON_UNESCAPED_SLASHES);
+
+			$config = array(
+				'ClientID'      => $ClientID,
+				'Password'      => $PW,
+				'Subscriptions' => $Subscriptions_str,
+				'UserName'      => $UserName
+				);
+
+			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, json_encode($config,JSON_UNESCAPED_SLASHES)); 
+
 		
 			
 		
@@ -122,14 +127,17 @@ declare(strict_types=1);
 			IPS_SetName($id_Mqtt_Client_Instance, 'EcoFlow Mqtt Client Socket('. $id_Mqtt_Spliiter_Instance .')' );
 			$this->LogMessage('Start MqttClient id ' . $id_Mqtt_Client_Instance, KL_NOTIFY);
 
-			
-			IPS_SetConfiguration($id_Mqtt_Client_Instance, '{
-				"Host":"mqtt-e.ecoflow.com",
-				"Open":true,
-				"Port":8883,
-				"UseSSL":true,
-				"VerifyHost":true,
-				"VerifyPeer":false}'); 
+
+			$config = array(
+							'Host'      => $mqtt_url,
+							'Open'      => false,
+							'Port'      => $mqtt_port,
+							'UseSSL'    => true,
+							'VerifyHost'=> true,
+							'VerifyPeer'=> false
+							);
+
+			IPS_SetConfiguration($id_Mqtt_Client_Instance, json_encode($config));
 
 			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 
@@ -172,7 +180,15 @@ declare(strict_types=1);
 			if ($Message === IM_CHANGESTATUS) 
 			{
 				$MqttClientStatus = IPS_GetInstance($SenderID)['InstanceStatus'];
-				$this->LogMessage('Status MQTT Client ' . $MqttClientStatus , KL_NOTIFY);	
+				$this->LogMessage('Status MQTT Client ' . $MqttClientStatus , KL_NOTIFY);
+				if ($MqttClientStatus >= 200)
+				{
+					$this->SetTimerInterval("UpdateConnect", 60 * 1000);
+				}
+				else
+				{
+					$this->SetTimerInterval("UpdateConnect", 0);
+				}
 			}
 		}
 
@@ -304,7 +320,20 @@ declare(strict_types=1);
 
 		public function UpdateConnect()
 		{
+
+			$this_Instance = IPS_GetInstance($this->InstanceID);
+			$id_Mqtt_Spliiter_Instance = $this_Instance['ConnectionID'];
+			$Mqtt_Spliiter_Instance = IPS_GetInstance($id_Mqtt_Spliiter_Instance);
+
+			$id_Mqtt_Client_Instance = $Mqtt_Spliiter_Instance['ConnectionID'];
+
+			$MqttClientStatus = IPS_GetInstance($id_Mqtt_Client_Instance)['InstanceStatus'];
 			
+			if ($MqttClientStatus >=200)
+			{
+				$this->LogMessage('UpdateConnect' . 'Status Mqtt Client: '. $MqttClientStatus, KL_NOTIFY);
+				//$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
+			}
 		}
 
 
