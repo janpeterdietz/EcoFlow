@@ -24,7 +24,7 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("pv2InputWatts", "pv2InputWatts", "", 30) ;
 			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
 
-			$this->RegisterVariableInteger("LastUpdateTime", "Lezte Update", "~UnixTimestamp", 5) ;
+			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
 			$this->RegisterVariableInteger("invStatue", "inverter Status", "", 6) ;
 
 			
@@ -109,6 +109,9 @@ declare(strict_types=1);
 				);
 
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, json_encode($config,JSON_UNESCAPED_SLASHES)); 
+
+		
+			
 		
 			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
 
@@ -145,27 +148,10 @@ declare(strict_types=1);
 
 			$this->SetStatus(102); //actice
 
-			$subscribe_data = [
-				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-				'PacketType'       => 8,
-				'QualityOfService' => 0,
-				'Retain'           => true,
-				'Topic'            => $t1,
-				'Payload'          => ''
-			];
+			IPS_Sleep(10 *1000);
 
-			$this->Send($subscribe_data);	
 
-			$subscribe_data = [
-				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-				'PacketType'       => 8,
-				'QualityOfService' => 0,
-				'Retain'           => true,
-				'Topic'            => $t2,
-				'Payload'          => ''
-			];
 
-			$this->Send($subscribe_data);	
 		
 
 
@@ -206,6 +192,39 @@ declare(strict_types=1);
 			}
 		}
 
+		public function test()
+		{
+			$UserName = $this->ReadAttributeString('Mqtt_UserName');
+			$PW = $this->ReadAttributeString('Mqtt_Password');
+			$SN = $this->ReadPropertyString('Seriennummer');		
+			
+			$t1 =  '/open/'. $UserName. '/'. $SN .'/quota';
+			$t2 =  '/open/'. $UserName. '/'. $SN .'/status';
+			
+
+			$subscribe_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 8,
+				'QualityOfService' => 0,
+				'Retain'           => true,
+				'Topic'            => $t1,
+				'Payload'          => ''
+			];
+
+			$this->Send($subscribe_data);	
+
+			$subscribe_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 8,
+				'QualityOfService' => 0,
+				'Retain'           => true,
+				'Topic'            => $t2,
+				'Payload'          => ''
+			];
+
+			$this->Send($subscribe_data);	
+		}
+		
 /*
 		public function GetConfigurationForParent()
         {
@@ -301,6 +320,7 @@ declare(strict_types=1);
 
 		public function UpdateConnect()
 		{
+
 			$this_Instance = IPS_GetInstance($this->InstanceID);
 			$id_Mqtt_Spliiter_Instance = $this_Instance['ConnectionID'];
 			$Mqtt_Spliiter_Instance = IPS_GetInstance($id_Mqtt_Spliiter_Instance);
