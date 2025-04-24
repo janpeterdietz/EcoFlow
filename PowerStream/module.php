@@ -20,9 +20,9 @@ declare(strict_types=1);
 			$this->RegisterAttributeString("Mqtt_UserName", "");
 			$this->RegisterAttributeString("Mqtt_ClientID", "");
 			
-			$this->RegisterVariableInteger("pv1InputWatts", "pv1InputWatts", "", 30) ;
-			$this->RegisterVariableInteger("pv2InputWatts", "pv2InputWatts", "", 30) ;
-			$this->RegisterVariableInteger("OutputWatts", "OutputWatts", "", 30) ;
+			$this->RegisterVariableFloat("pv1InputWatts", "pv1InputWatts", "", 30) ;
+			$this->RegisterVariableFloat("pv2InputWatts", "pv2InputWatts", "", 30) ;
+			$this->RegisterVariableFloat("OutputWatts", "OutputWatts", "", 30) ;
 
 			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
 			$this->RegisterVariableInteger("invStatue", "inverter Status", "", 6) ;
