@@ -242,7 +242,6 @@ declare(strict_types=1);
 
 		public function setpermanentWatts(float $value)
 		{
-			
 			if ($value < 600)
 			{
 				$value = 600;
