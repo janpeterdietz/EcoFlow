@@ -8,6 +8,23 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::Create();
 
+			if (!IPS_VariableProfileExists('EF.Inverterstatus')) 
+			{
+				IPS_CreateVariableProfile('EF.Inverterstatus', VARIABLETYPE_INTEGER);
+				IPS_SetVariableProfileText('EF.Inverterstatus', '', '');
+				IPS_SetVariableProfileValues ('EF.Inverterstatus', 0, 6, 0);
+				
+				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 0, "unkown","" , -1);
+				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 1, "idel","" , -1);
+				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 2, "start","" , -1);
+				
+				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 3, "?","" , -1);
+				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 4, "??","" , -1);
+				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 5, "???","" , -1);
+				
+				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 6, "Grid Connect","" , -1);
+			}
+
 			$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
 			
 			$this->RegisterPropertyString("accessKey", "");
@@ -23,9 +40,11 @@ declare(strict_types=1);
 			$this->RegisterVariableFloat("pv1InputWatts", "pv1InputWatts", "", 30) ;
 			$this->RegisterVariableFloat("pv2InputWatts", "pv2InputWatts", "", 30) ;
 			$this->RegisterVariableFloat("OutputWatts", "OutputWatts", "", 30) ;
+			$this->RegisterVariableFloat("geneWatt", "geneWatt", "", 30) ;
+			
 
 			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
-			$this->RegisterVariableInteger("invStatue", "inverter Status", "", 6) ;
+			$this->RegisterVariableInteger("invStatue", "inverter Status", "EF.Inverterstatus", 6) ;
 
 			
 			//Micro-inverter INV operating status: 1: IDEL; 2: START; ...check inv_logic; 6: successful grid connection
@@ -130,7 +149,7 @@ declare(strict_types=1);
 
 			$config = array(
 							'Host'      => $mqtt_url,
-							'Open'      => false,
+							'Open'      => true,
 							'Port'      => $mqtt_port,
 							'UseSSL'    => true,
 							'VerifyHost'=> true,
@@ -259,6 +278,7 @@ declare(strict_types=1);
 
 		public function Send(array $PayLoad)
 		{
+			$this->LogMessage('SendData',KL_NOTIFY );
 			$this->SendDataToParent(json_encode($PayLoad));
 		}
 		
@@ -295,6 +315,13 @@ declare(strict_types=1);
 				{
 					$this->setvalue("OutputWatts", intval($Payload['invOutputWatts'])/10);
 				}
+				
+				if (array_key_exists('geneWatt', $Payload))
+				{
+					$this->setvalue("geneWatt", intval($Payload['geneWatt'])/10);
+				}
+
+				
 
 				if (array_key_exists('pv1InputWatts', $Payload))
 				{
