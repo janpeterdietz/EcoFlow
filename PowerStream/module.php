@@ -41,6 +41,9 @@ declare(strict_types=1);
 			$this->RegisterVariableFloat("pv2InputWatts", "pv2InputWatts", "", 30) ;
 			$this->RegisterVariableFloat("OutputWatts", "OutputWatts", "", 30) ;
 			$this->RegisterVariableFloat("geneWatt", "geneWatt", "", 30) ;
+			$this->RegisterVariableFloat("permanentWatts", "permanentWatts", "", 30) ;
+
+		
 			
 
 			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
@@ -233,7 +236,7 @@ declare(strict_types=1);
 			$this->Send($subscribe_data);	
 
 			$subscribe_data = [
-				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'DataID'           => '{018EF6B5-AB94-40C6-AA53-46943E824ACF}',
 				'PacketType'       => 8,
 				'QualityOfService' => 0,
 				'Retain'           => true,
@@ -315,10 +318,15 @@ declare(strict_types=1);
 				{
 					$this->setvalue("OutputWatts", intval($Payload['invOutputWatts'])/10);
 				}
-				
+
 				if (array_key_exists('geneWatt', $Payload))
 				{
 					$this->setvalue("geneWatt", intval($Payload['geneWatt'])/10);
+				}
+
+				if (array_key_exists('permanentWatts', $Payload))
+				{
+					$this->setvalue("permanentWatts", intval($Payload['permanentWatts'])/10);
 				}
 
 				
