@@ -37,11 +37,11 @@ declare(strict_types=1);
 			$this->RegisterAttributeString("Mqtt_UserName", "");
 			$this->RegisterAttributeString("Mqtt_ClientID", "");
 			
-			$this->RegisterVariableFloat("pv1InputWatts", "pv1InputWatts", "", 30) ;
-			$this->RegisterVariableFloat("pv2InputWatts", "pv2InputWatts", "", 30) ;
-			$this->RegisterVariableFloat("OutputWatts", "OutputWatts", "", 30) ;
-			$this->RegisterVariableFloat("geneWatt", "geneWatt", "", 30) ;
-			$this->RegisterVariableFloat("permanentWatts", "permanentWatts", "", 30) ;
+			$this->RegisterVariableFloat("pv1InputWatts", "pv1InputWatts", "~Watt", 30) ;
+			$this->RegisterVariableFloat("pv2InputWatts", "pv2InputWatts", "~Watt", 30) ;
+			$this->RegisterVariableFloat("OutputWatts", "OutputWatts", "~Watt", 30) ;
+			$this->RegisterVariableFloat("geneWatt", "geneWatt", "~Watt", 30) ;
+			$this->RegisterVariableFloat("permanentWatts", "permanentWatts", "~Watt", 30) ;
 
 		
 			
@@ -73,7 +73,7 @@ declare(strict_types=1);
 			$accessKey = $this->ReadPropertyString("accessKey");
 			$secretKey = $this->ReadPropertyString("secretKey");
 			$SN = $this->ReadPropertyString('Seriennummer');
-	
+
 
 			if ( ($accessKey == '') || ($secretKey == '') || ($SN == '') ) 
 			{
@@ -81,9 +81,11 @@ declare(strict_types=1);
 				return;
 			} 
 			$this->SetStatus(104); //noch inaktiv
-			
+		
 			//$filter = '.*' . '"' . $SN. '"'. '.*';
-			//$this->SetReceiveDataFilter($filter);
+		
+			$filter = '*' . '"' . $SN . '"'. '*';
+			$this->SetReceiveDataFilter($filter);
 
 			
 			$response = $this->getMQTTCertification();
@@ -116,17 +118,19 @@ declare(strict_types=1);
 			
 			$t1 =  '/open/'. $UserName. '/'. $SN .'/quota';
 			$t2 =  '/open/'. $UserName. '/'. $SN .'/status';
+			$t3 =  '/open/'. $UserName. '/'. $SN .'/set_reply';
 
-			$t1_full = array('Topic' => $t1, 'QoS' => 0);
-			$t2_full = array('Topic' => $t2, 'QoS' => 0);
 
-			$Subscriptions = array($t1_full, $t2_full);
-			$Subscriptions_str = json_encode($Subscriptions,JSON_UNESCAPED_SLASHES);
+			$t1_full = ['Topic' => $t1, 'QoS' => 0];
+			$t2_full = ['Topic' => $t2, 'QoS' => 0];
+			$t3_full = ['Topic' => $t3, 'QoS' => 0];
+
+			$Subscriptions = [$t1_full, $t2_full, $t3_full];
 
 			$config = array(
 				'ClientID'      => $ClientID,
 				'Password'      => $PW,
-				'Subscriptions' => $Subscriptions_str,
+				'Subscriptions' => json_encode($Subscriptions,JSON_UNESCAPED_SLASHES),
 				'UserName'      => $UserName
 				);
 
@@ -137,45 +141,34 @@ declare(strict_types=1);
 		
 			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
 
-			if ($result)
-			$this->LogMessage('Start MqttClient Splitter ' . 'Erfolg', KL_NOTIFY);
-			else
+			if (!$result)
 			$this->LogMessage('Start MqttClient Splitter ' . 'Mist aber auch', KL_NOTIFY);	
-			
-			$this->LogMessage('Start Mqttsplitter ' . json_encode($Mqtt_Spliiter_Instance), KL_NOTIFY);
 
 
 			$id_Mqtt_Client_Instance = $Mqtt_Spliiter_Instance['ConnectionID'];
 			IPS_SetName($id_Mqtt_Client_Instance, 'EcoFlow Mqtt Client Socket('. $id_Mqtt_Spliiter_Instance .')' );
-			$this->LogMessage('Start MqttClient id ' . $id_Mqtt_Client_Instance, KL_NOTIFY);
+			//$this->LogMessage('Start MqttClient id ' . $id_Mqtt_Client_Instance, KL_NOTIFY);
 
 
-			$config = array(
-							'Host'      => $mqtt_url,
-							'Open'      => true,
-							'Port'      => $mqtt_port,
-							'UseSSL'    => true,
-							'VerifyHost'=> true,
-							'VerifyPeer'=> false
-							);
+			$config = [
+						'Host'      => $mqtt_url,
+						'Open'      => true,
+						'Port'      => $mqtt_port,
+						'UseSSL'    => true,
+						'VerifyHost'=> true,
+						'VerifyPeer'=> false
+						];
 
 			IPS_SetConfiguration($id_Mqtt_Client_Instance, json_encode($config));
 
 			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 
-			if ($result)
-			$this->LogMessage('Start MqttClient Socket ' . 'Erfolg', KL_NOTIFY);
-			else
+			if (!$result)
 			$this->LogMessage('Start MqttClient Socket ' . 'Mist aber auch', KL_NOTIFY);	
 
 			$this->SetStatus(102); //actice
 
-			IPS_Sleep(10 *1000);
-
-
-
-		
-
+			IPS_Sleep(5*1000);
 
 			// Reaktion auf Statusänderung des Sockets
 			//Unregister all messages
@@ -216,37 +209,93 @@ declare(strict_types=1);
 
 		public function test()
 		{
+			
+
+
 			$UserName = $this->ReadAttributeString('Mqtt_UserName');
 			$PW = $this->ReadAttributeString('Mqtt_Password');
 			$SN = $this->ReadPropertyString('Seriennummer');		
 			
-			$t1 =  '/open/'. $UserName. '/'. $SN .'/quota';
-			$t2 =  '/open/'. $UserName. '/'. $SN .'/status';
-			
+			$tsend =  '/open/'. $UserName. '/'. $SN .'/quota';
 
-			$subscribe_data = [
+			$params = ['permanentWatts' => ""];
+			$payload = [
+			"cmdId"=> 1,
+			"cmdFunc"=> 20,	
+			"param" => $params ];
+				
+
+			$send_data = [
 				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-				'PacketType'       => 8,
+				'PacketType'       => 3,
 				'QualityOfService' => 0,
 				'Retain'           => true,
-				'Topic'            => $t1,
-				'Payload'          => ''
-			];
+				'Topic'            => $tsend,
+				'Payload'          => json_encode($payload)
+				];
 
-			$this->Send($subscribe_data);	
+			$send_data_str = json_encode($send_data);
 
-			$subscribe_data = [
-				'DataID'           => '{018EF6B5-AB94-40C6-AA53-46943E824ACF}',
-				'PacketType'       => 8,
+
+			$this->Send($send_data_str);	
+		}
+
+		public function setpermanentWatts(float $value)
+		{
+			
+			if ($value < 600)
+			{
+				$value = 600;
+			}
+			else if ($value > 800)
+			{
+				$value = 600;
+			}
+
+			$value = (int)($value * 10); 
+
+
+			$UserName = $this->ReadAttributeString('Mqtt_UserName');
+			$PW = $this->ReadAttributeString('Mqtt_Password');
+			$SN = $this->ReadPropertyString('Seriennummer');		
+			
+			$tsend =  '/open/'. $UserName. '/'. $SN .'/set';
+			
+			$params = ['permanentWatts' => $value];
+
+			$payload = ['id' => 1,
+						'version' =>"1.0",
+						'cmdCode' => "WN511_SET_PERMANENT_WATTS_PACK",
+						"params" => $params ];
+						
+
+			$send_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 3,
 				'QualityOfService' => 0,
 				'Retain'           => true,
-				'Topic'            => $t2,
-				'Payload'          => ''
-			];
+				'Topic'            => $tsend,
+				'Payload'          => json_encode($payload)
+				];
 
-			$this->Send($subscribe_data);	
+			$send_data_str = json_encode($send_data);
+
+
+			$this->Send($send_data_str);				
 		}
 		
+
+		public function RequestAction($Ident, $Value)
+        {
+            switch ($Ident) {
+                case 'permanentWatts':
+					$this->setpermanentWatts($Value);
+					break;
+                default:
+                    $this->SendDebug(__FUNCTION__, 'Invalid Action: ' . $Ident, 0);
+                    break;
+            }
+        }
 /*
 		public function GetConfigurationForParent()
         {
@@ -279,10 +328,11 @@ declare(strict_types=1);
         }
 */		
 
-		public function Send(array $PayLoad)
+		public function Send(string $PayLoad)
 		{
-			$this->LogMessage('SendData',KL_NOTIFY );
-			$this->SendDataToParent(json_encode($PayLoad));
+			
+			$this->LogMessage('SendData '. $PayLoad,KL_NOTIFY );
+			$this->SendDataToParent($PayLoad);
 		}
 		
 
@@ -300,9 +350,7 @@ declare(strict_types=1);
 
 			if (array_key_exists('param', $Payload))
 			{
-				
 				$Payload = $Payload['param'];
-
 
 				if (array_key_exists('utcTime', $Payload))
 				{
@@ -330,7 +378,6 @@ declare(strict_types=1);
 				}
 
 				
-
 				if (array_key_exists('pv1InputWatts', $Payload))
 				{
 					$this->setvalue("pv1InputWatts", intval($Payload['pv1InputWatts'])/10);
@@ -348,7 +395,7 @@ declare(strict_types=1);
 				$Payload = $Payload['params'];
 				if (array_key_exists('Status', $Payload))
 				{
-					$this->setvalue("Status", $$Payload['Status']);
+					$this->setvalue("Status", $Payload['Status']);
 				}
 			}
 		}
