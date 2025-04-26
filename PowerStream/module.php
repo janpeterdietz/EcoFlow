@@ -84,7 +84,7 @@ declare(strict_types=1);
 		
 			//$filter = '.*' . '"' . $SN. '"'. '.*';
 		
-			$filter = '*' . '"' . $SN . '"'. '*';
+			//$filter = '*"' . $SN . '"*';
 			//$this->SetReceiveDataFilter($filter);
 
 			
