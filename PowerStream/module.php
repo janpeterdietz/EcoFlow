@@ -72,7 +72,7 @@ declare(strict_types=1);
 			parent::ApplyChanges();
 			$accessKey = $this->ReadPropertyString("accessKey");
 			$secretKey = $this->ReadPropertyString("secretKey");
-			echo $SN = $this->ReadPropertyString('Seriennummer');
+			$SN = $this->ReadPropertyString('Seriennummer');
 
 
 			if ( ($accessKey == '') || ($secretKey == '') || ($SN == '') ) 
@@ -82,10 +82,9 @@ declare(strict_types=1);
 			} 
 			$this->SetStatus(104); //noch inaktiv
 		
-			$filter ='*.'. $SN .'.*';
-			$filter = "*.". $SN ."*.";
-			$filter = '.*HW.*';
-			//$filter = '*"' . $SN . '"*';
+			$filter = '.*' ."HW51ZEH49G941031". '.*';
+			$filter = '.*' .$SN. '.*';
+			
 			$this->SetReceiveDataFilter($filter);
 
 			
