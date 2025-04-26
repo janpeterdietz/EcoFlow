@@ -72,7 +72,7 @@ declare(strict_types=1);
 			parent::ApplyChanges();
 			$accessKey = $this->ReadPropertyString("accessKey");
 			$secretKey = $this->ReadPropertyString("secretKey");
-			$SN = $this->ReadPropertyString('Seriennummer');
+			echo $SN = $this->ReadPropertyString('Seriennummer');
 
 
 			if ( ($accessKey == '') || ($secretKey == '') || ($SN == '') ) 
@@ -82,10 +82,11 @@ declare(strict_types=1);
 			} 
 			$this->SetStatus(104); //noch inaktiv
 		
-			//$filter = '.*' . '"' . $SN. '"'. '.*';
-		
+			$filter ='*.'. $SN .'.*';
+			$filter = "*.". $SN ."*.";
+			$filter = '.*HW.*';
 			//$filter = '*"' . $SN . '"*';
-			//$this->SetReceiveDataFilter($filter);
+			$this->SetReceiveDataFilter($filter);
 
 			
 			$response = $this->getMQTTCertification();
@@ -210,8 +211,6 @@ declare(strict_types=1);
 		public function test()
 		{
 			
-
-
 			$UserName = $this->ReadAttributeString('Mqtt_UserName');
 			$PW = $this->ReadAttributeString('Mqtt_Password');
 			$SN = $this->ReadPropertyString('Seriennummer');		
@@ -338,6 +337,7 @@ declare(strict_types=1);
 		public function ReceiveData($JSONString)
 		{
 			$data = json_decode($JSONString, true);
+			$this->SendDebug(__FUNCTION__,  $JSONString, 0);
 			if ($data === false)
 			{
 				$this->LogMessage('ReceiveData' . "Daten Fehlerhaft", KL_NOTIFY);
