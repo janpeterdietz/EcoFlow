@@ -390,7 +390,7 @@ declare(strict_types=1);
 
 			if (array_key_exists('params', $Payload))
 			{
-				this->LogMessage('Status .'. $Payload,KL_NOTIFY );
+				$this->LogMessage('Status .'. $Payload,KL_NOTIFY );
 				$Payload = $Payload['params'];
 				if (array_key_exists('Status', $Payload))
 				{
