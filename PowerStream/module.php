@@ -390,11 +390,11 @@ declare(strict_types=1);
 
 			if (array_key_exists('params', $Payload))
 			{
-				$this->LogMessage('Status .'. $Payload,KL_NOTIFY );
+				$this->LogMessage('Status .'. json_encode($Payload),KL_NOTIFY );
 				$Payload = $Payload['params'];
-				if (array_key_exists('Status', $Payload))
+				if (array_key_exists('status', $Payload))
 				{
-					$this->setvalue("Status", $Payload['Status']);
+					$this->setvalue("Status", $Payload['status']);
 				}
 			}
 		}
