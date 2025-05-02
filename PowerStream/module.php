@@ -8,7 +8,7 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::Create();
 
-			if (!IPS_VariableProfileExists('EF.Inverterstatus')) 
+//			if (!IPS_VariableProfileExists('EF.Inverterstatus')) 
 			{
 				IPS_CreateVariableProfile('EF.Inverterstatus', VARIABLETYPE_INTEGER);
 				IPS_SetVariableProfileText('EF.Inverterstatus', '', '');
@@ -25,14 +25,14 @@ declare(strict_types=1);
 				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 6, "Grid Connect","" , -1);
 			}
 
-			if (!IPS_VariableProfileExists('EF.Connectstatus')) 
+//			if (!IPS_VariableProfileExists('EF.Connectstatus')) 
 			{
-				IPS_CreateVariableProfile('EF.Inverterstatus', VARIABLETYPE_INTEGER);
-				IPS_SetVariableProfileText('EF.Inverterstatus', '', '');
-				IPS_SetVariableProfileValues ('EF.Inverterstatus', 0, 1, 0);
+				IPS_CreateVariableProfile('EF.Connectstatus', VARIABLETYPE_INTEGER);
+				IPS_SetVariableProfileText('EF.Connectstatus', '', '');
+				IPS_SetVariableProfileValues ('EF.Connectstatus', 0, 1, 0);
 				
-				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 0, "Offline","" , -1);
-				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 1, "Online","" , -1);
+				IPS_SetVariableProfileAssociation('EF.Connectstatus', 0, "Offline","" , -1);
+				IPS_SetVariableProfileAssociation('EF.Connectstatus', 1, "Online","" , -1);
 			}
 
 			$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
@@ -56,7 +56,7 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
 			$this->RegisterVariableInteger("invStatue", "inverter Status", "EF.Inverterstatus", 6) ;			
 			//Micro-inverter INV operating status: 1: IDEL; 2: START; ...check inv_logic; 6: successful grid connection
-			$this->RegisterVariableInteger("Status", "Status", "Connectstatus", 30) ;
+			$this->RegisterVariableInteger("Status", "Status", "EF.Connectstatus", 30) ;
 			//status iDevice online or not0: No, 1: Yes
 
 
