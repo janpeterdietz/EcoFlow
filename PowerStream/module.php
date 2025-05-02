@@ -25,6 +25,16 @@ declare(strict_types=1);
 				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 6, "Grid Connect","" , -1);
 			}
 
+			if (!IPS_VariableProfileExists('EF.Connectstatus')) 
+			{
+				IPS_CreateVariableProfile('EF.Inverterstatus', VARIABLETYPE_INTEGER);
+				IPS_SetVariableProfileText('EF.Inverterstatus', '', '');
+				IPS_SetVariableProfileValues ('EF.Inverterstatus', 0, 1, 0);
+				
+				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 0, "Offline","" , -1);
+				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 1, "Online","" , -1);
+			}
+
 			$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
 			
 			$this->RegisterPropertyString("accessKey", "");
@@ -43,17 +53,11 @@ declare(strict_types=1);
 			$this->RegisterVariableFloat("geneWatt", "geneWatt", "~Watt", 30) ;
 			$this->RegisterVariableFloat("permanentWatts", "permanentWatts", "~Watt", 30) ;
 
-		
-			
-
 			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
-			$this->RegisterVariableInteger("invStatue", "inverter Status", "EF.Inverterstatus", 6) ;
-
-			
+			$this->RegisterVariableInteger("invStatue", "inverter Status", "EF.Inverterstatus", 6) ;			
 			//Micro-inverter INV operating status: 1: IDEL; 2: START; ...check inv_logic; 6: successful grid connection
-			
-
-			$this->RegisterVariableInteger("Status", "Status", "", 30) ;
+			$this->RegisterVariableInteger("Status", "Status", "Connectstatus", 30) ;
+			//status iDevice online or not0: No, 1: Yes
 
 
 			$this->RegisterTimer("UpdateConnect", 0, 'EF_UpdateConnect(' . $this->InstanceID . ');');
@@ -390,7 +394,6 @@ declare(strict_types=1);
 
 			if (array_key_exists('params', $Payload))
 			{
-				$this->LogMessage('Status .'. json_encode($Payload),KL_NOTIFY );
 				$Payload = $Payload['params'];
 				if (array_key_exists('status', $Payload))
 				{
