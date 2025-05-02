@@ -8,7 +8,7 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::Create();
 
-//			if (!IPS_VariableProfileExists('EF.Inverterstatus')) 
+			if (!IPS_VariableProfileExists('EF.Inverterstatus')) 
 			{
 				IPS_CreateVariableProfile('EF.Inverterstatus', VARIABLETYPE_INTEGER);
 				IPS_SetVariableProfileText('EF.Inverterstatus', '', '');
@@ -25,7 +25,7 @@ declare(strict_types=1);
 				IPS_SetVariableProfileAssociation('EF.Inverterstatus', 6, "Grid Connect","" , -1);
 			}
 
-//			if (!IPS_VariableProfileExists('EF.Connectstatus')) 
+			if (!IPS_VariableProfileExists('EF.Connectstatus')) 
 			{
 				IPS_CreateVariableProfile('EF.Connectstatus', VARIABLETYPE_INTEGER);
 				IPS_SetVariableProfileText('EF.Connectstatus', '', '');
