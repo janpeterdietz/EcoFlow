@@ -44,8 +44,13 @@ declare(strict_types=1);
 			$this->SetStatus(104); //noch inaktiv
 
 			
-			$response = $this->deviceList();
-			$this->WriteAttributeString("Mqtt_ClientID", substr( $response['eagleEyeTraceId'], 0, 22));
+			if (!$newdevices = $this->deviceList() )
+			{
+				$this->SetStatus(200); //vermutlich stimmmt der Account nicht
+				return;
+			}
+
+			$this->WriteAttributeString("Mqtt_ClientID", substr( $newdevices['eagleEyeTraceId'], 0, 22));
 			
 			
 			$response = $this->getMQTTCertification();
@@ -71,10 +76,17 @@ declare(strict_types=1);
 
 			if ( ($accessKey == '') || ($secretKey == '')) 
 			{
-				$this->SetStatus(200); //One of the Variable is missing
+				$this->SetStatus(104); //One of the Variable is missing
 				return;
 			} 
+			
+			if (!$newdevices = $this->deviceList() )
+			{
+				$this->SetStatus(200); //vermutlich stimmmt der Account nicht
+				return;
+			}
 			$newdevices = $this->deviceList()['data'];
+
 
 		
 			
@@ -135,8 +147,6 @@ declare(strict_types=1);
 						$count = $count +1;
 					}
 				}
-					
-
 
 			}
 
@@ -218,6 +228,9 @@ declare(strict_types=1);
 				$data = $response;
 				return $data;
 			}
+		
+			return false; // im Fehlerfall
+		
 			//	throw new RuntimeException('Error getting deviceList: ' . $response['message']);
 		}
 

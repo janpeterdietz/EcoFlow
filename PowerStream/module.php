@@ -33,6 +33,8 @@ declare(strict_types=1);
 				
 				IPS_SetVariableProfileAssociation('EF.Connectstatus', 0, "Offline","" , -1);
 				IPS_SetVariableProfileAssociation('EF.Connectstatus', 1, "Online","" , -1);
+				IPS_SetVariableProfileAssociation('EF.Connectstatus', 2, "Unkown","" , -1);
+		
 			}
 
 			$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
@@ -56,7 +58,10 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
 			$this->RegisterVariableInteger("invStatue", "inverter Status", "EF.Inverterstatus", 6) ;			
 			//Micro-inverter INV operating status: 1: IDEL; 2: START; ...check inv_logic; 6: successful grid connection
+			$this->setvalue("invStatue", 0);
+			
 			$this->RegisterVariableInteger("Status", "Status", "EF.Connectstatus", 30) ;
+			$this->setvalue("Status", 2);
 			//status iDevice online or not0: No, 1: Yes
 
 

@@ -4,5 +4,9 @@
         { "type": "PasswordTextBox", "name": "secretKey", "caption": "Secret Key" }
     ], 
     "actions": [],
-    "status": []
+    "status": [ 
+        { "code": 102, "icon": "active", "caption": "Logged in!" },  
+        { "code": 200, "icon": "error", "caption": "Error!" },
+        { "code": 104, "icon": "inactive", "caption": "Logged out!" }
+    ]
 }
