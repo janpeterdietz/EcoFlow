@@ -144,15 +144,15 @@ declare(strict_types=1);
 				);
 
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, json_encode($config,JSON_UNESCAPED_SLASHES)); 
+			IPS_Sleep(1*1000);
 
-		
-			
 		
 			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
 
 			if (!$result)
-			$this->LogMessage('Start MqttClient Splitter ' . 'Mist aber auch', KL_NOTIFY);	
-
+			{
+				$this->LogMessage('Start MqttClient Splitter ' . 'Mist aber auch', KL_NOTIFY);	
+			}
 
 			$id_Mqtt_Client_Instance = $Mqtt_Spliiter_Instance['ConnectionID'];
 			IPS_SetName($id_Mqtt_Client_Instance, 'EcoFlow Mqtt Client Socket('. $id_Mqtt_Spliiter_Instance .')' );
@@ -169,11 +169,14 @@ declare(strict_types=1);
 						];
 
 			IPS_SetConfiguration($id_Mqtt_Client_Instance, json_encode($config));
+			IPS_Sleep(1*1000);
 
 			$result = IPS_ApplyChanges($id_Mqtt_Client_Instance);
 
 			if (!$result)
-			$this->LogMessage('Start MqttClient Socket ' . 'Mist aber auch', KL_NOTIFY);	
+			{
+				$this->LogMessage('Start MqttClient Socket ' . 'Mist aber auch', KL_NOTIFY);	
+			}
 
 			$this->SetStatus(102); //actice
 
