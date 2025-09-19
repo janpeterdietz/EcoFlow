@@ -101,7 +101,7 @@ declare(strict_types=1);
 				$availableDevices[$count] = 
 					[
 						'name' =>  $device['deviceName'],
-						'productName' =>  $device['productName'],
+						//'productName' =>  $device['productName'],
 						'Seriennummer' => $device['sn'],
 
 						'InstanzID' => '0',
@@ -111,7 +111,7 @@ declare(strict_types=1);
 								'configuration' => [ "accessKey" 			=> $accessKey,
 													  "secretKey" 			=> $secretKey,
 													  "Seriennummer"		=> $device['sn'],
-													  "deviceName"			=> $device['productName']
+													  //"deviceName"			=> $device['productName']
 														  ]
 							]
 
@@ -184,11 +184,11 @@ declare(strict_types=1);
 								'caption' => 'Name',
 								'width' => 'auto'
 							],
-							[
+							/*[
 								'name' => 'productName',
 								'caption' => 'productName',
 								'width' => '200px'
-							],
+							],*/
 							[
 								'name' => 'Seriennummer',
 								'caption' => 'Seriennummer',
