@@ -97,11 +97,17 @@ declare(strict_types=1);
 
 			foreach($newdevices as $key => $device)
 			{
+				
+				if (!array_key_exists('productName', $device)) 
+				{
+					$device['productName'] = 'Unkown';
+				}
+					    
 				//print_r($device);
 				$availableDevices[$count] = 
 					[
 						'name' =>  $device['deviceName'],
-						//'productName' =>  $device['productName'],
+						'productName' =>  $device['productName'],
 						'Seriennummer' => $device['sn'],
 
 						'InstanzID' => '0',
@@ -111,7 +117,7 @@ declare(strict_types=1);
 								'configuration' => [ "accessKey" 			=> $accessKey,
 													  "secretKey" 			=> $secretKey,
 													  "Seriennummer"		=> $device['sn'],
-													  //"deviceName"			=> $device['productName']
+													  "deviceName"			=> $device['productName']
 														  ]
 							]
 
@@ -142,7 +148,7 @@ declare(strict_types=1);
 				
 					if (!$instance_match) // neues Geräte
 					{
-						//$availableDevices[$key]['productName'] = IPS_GetProperty($instanceID,'productName' );
+						$availableDevices[$key]['productName'] = IPS_GetProperty($instanceID,'productName' );
 						$availableDevices[$key]['name'] = IPS_GetName($instanceID);	
 						$count = $count +1;
 					}
@@ -184,11 +190,11 @@ declare(strict_types=1);
 								'caption' => 'Name',
 								'width' => 'auto'
 							],
-							/*[
+							[
 								'name' => 'productName',
 								'caption' => 'productName',
 								'width' => '200px'
-							],*/
+							],
 							[
 								'name' => 'Seriennummer',
 								'caption' => 'Seriennummer',
