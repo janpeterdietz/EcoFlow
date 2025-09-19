@@ -100,7 +100,8 @@ declare(strict_types=1);
 				
 				if (!array_key_exists('productName', $device)) 
 				{
-					$device['productName'] = 'Unkown';
+					echo 'productName';
+					$device =  'productName' => 'Unkown';
 				}
 					    
 				//print_r($device);
