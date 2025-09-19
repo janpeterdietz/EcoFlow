@@ -101,62 +101,62 @@ declare(strict_types=1);
 				if (!array_key_exists('productName', $device)) 
 				{
 					$device +=  ['productName' => 'Unkown'];
-					break;
 				}
-					    
-				print_r($device);
-
-				$availableDevices[$count] = 
-					[
-						'name' =>  $device['deviceName'],
-						'productName' =>  $device['productName'],
-						'Seriennummer' => $device['sn'],
-
-						'InstanzID' => '0',
-						['EcoFlow_Data'],		
-							'create' => [	
-								'moduleID' => '{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}',
-								'configuration' => [ "accessKey" 			=> $accessKey,
-													  "secretKey" 			=> $secretKey,
-													  "Seriennummer"		=> $device['sn'],
-													  "deviceName"			=> $device['productName']
-														  ]
-							]
-
-					];
-				$count = $count+1;
-
-				$no_new_devices = $count; 
-				$lostDevices = [];
-				$count = 0;
-				
-				//print_r($availableDevices);
-				
-				foreach (IPS_GetInstanceListByModuleID('{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}') as $instanceID)
 				{
+					    
+					print_r($device);
+
+					$availableDevices[$count] = 
+						[
+							'name' =>  $device['deviceName'],
+							'productName' =>  $device['productName'],
+							'Seriennummer' => $device['sn'],
+
+							'InstanzID' => '0',
+							['EcoFlow_Data'],		
+								'create' => [	
+									'moduleID' => '{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}',
+									'configuration' => [ "accessKey" 			=> $accessKey,
+															"secretKey" 			=> $secretKey,
+															"Seriennummer"		=> $device['sn'],
+															"deviceName"			=> $device['productName']
+																]
+								]
+
+						];
+					$count = $count+1;
+
+					$no_new_devices = $count; 
+					$lostDevices = [];
+					$count = 0;
 					
-					$instance_match = false;
-					// schon verhandenes Gerät
-					foreach($availableDevices as  $key => $device)
-					{	
-						if  ( $availableDevices[$key]['Seriennummer'] == IPS_GetProperty($instanceID,'Seriennummer') )
+					//print_r($availableDevices);
+					
+					foreach (IPS_GetInstanceListByModuleID('{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}') as $instanceID)
+					{
+						
+						$instance_match = false;
+						// schon verhandenes Gerät
+						foreach($availableDevices as  $key => $device)
+						{	
+							if  ( $availableDevices[$key]['Seriennummer'] == IPS_GetProperty($instanceID,'Seriennummer') )
+							{
+								$availableDevices[$key]['instanceID'] = $instanceID;
+								$availableDevices[$key]['deviceName'] = IPS_GetProperty($instanceID,'deviceName' );
+								$availableDevices[$key]['name'] = IPS_GetName($instanceID);	
+								$instance_match = true;
+							}
+						}
+					
+						if (!$instance_match) // neues Geräte
 						{
-							$availableDevices[$key]['instanceID'] = $instanceID;
-							$availableDevices[$key]['deviceName'] = IPS_GetProperty($instanceID,'deviceName' );
+							//$availableDevices[$key]['productName'] = IPS_GetProperty($instanceID,'productName' );
+							$availableDevices[$key]['productName'] = 'Unkown';
 							$availableDevices[$key]['name'] = IPS_GetName($instanceID);	
-							$instance_match = true;
+							$count = $count +1;
 						}
 					}
-				
-					if (!$instance_match) // neues Geräte
-					{
-						//$availableDevices[$key]['productName'] = IPS_GetProperty($instanceID,'productName' );
-						$availableDevices[$key]['productName'] = 'Unkown';
-						$availableDevices[$key]['name'] = IPS_GetName($instanceID);	
-						$count = $count +1;
-					}
 				}
-
 			}
 
 		$no_new_devices = $count; 
