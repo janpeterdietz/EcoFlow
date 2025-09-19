@@ -105,7 +105,7 @@ declare(strict_types=1);
 				else
 				{
 					    
-					print_r($device);
+					//print_r($device);
 
 					$availableDevices[$count] = 
 						[
