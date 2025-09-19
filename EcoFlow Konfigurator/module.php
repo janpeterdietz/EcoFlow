@@ -101,9 +101,11 @@ declare(strict_types=1);
 				if (!array_key_exists('productName', $device)) 
 				{
 					$device +=  ['productName' => 'Unkown'];
+					break;
 				}
 					    
 				print_r($device);
+
 				$availableDevices[$count] = 
 					[
 						'name' =>  $device['deviceName'],
