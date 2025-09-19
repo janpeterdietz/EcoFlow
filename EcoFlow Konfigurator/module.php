@@ -149,6 +149,7 @@ declare(strict_types=1);
 					if (!$instance_match) // neues Geräte
 					{
 						//$availableDevices[$key]['productName'] = IPS_GetProperty($instanceID,'productName' );
+						$availableDevices[$key]['productName'] = 'Unkown';
 						$availableDevices[$key]['name'] = IPS_GetName($instanceID);	
 						$count = $count +1;
 					}
