@@ -101,7 +101,7 @@ declare(strict_types=1);
 				if (!array_key_exists('productName', $device)) 
 				{
 					echo 'productName';
-					$device =  ['productName' => 'Unkown'];
+					$device +=  ['productName' => 'Unkown'];
 				}
 					    
 				//print_r($device);
