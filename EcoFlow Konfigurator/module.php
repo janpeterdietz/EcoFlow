@@ -102,6 +102,7 @@ declare(strict_types=1);
 				{
 					$device +=  ['productName' => 'Unkown'];
 				}
+				else
 				{
 					    
 					print_r($device);
