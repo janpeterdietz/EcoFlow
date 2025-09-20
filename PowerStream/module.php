@@ -349,13 +349,14 @@ declare(strict_types=1);
 		{
 			$data = json_decode($JSONString, true);
 			$this->SendDebug(__FUNCTION__,  $JSONString, 0);
+			
 			if ($data === false)
 			{
 				$this->LogMessage('ReceiveData' . "Daten Fehlerhaft", KL_NOTIFY);
 			}
 
 			$Payload = json_decode($data['Payload'], true);
-			//$this->LogMessage('ReceiveData' . print_r($Payload, true), KL_NOTIFY);
+			$this->LogMessage('ReceiveData' . print_r($Payload, true), KL_NOTIFY);
 			
 
 			if (array_key_exists('param', $Payload))

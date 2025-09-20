@@ -106,25 +106,34 @@ declare(strict_types=1);
 				{
 					    
 					//print_r($device);
+					if ($device['productName'] == 'PowerStream')
+					{
+						$modultype = '{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}';
+					}
+					else
+					{
+						$modultype = '{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}';
+					}
 
 					$availableDevices[$count] = 
-						[
-							'name' =>  $device['deviceName'],
-							'productName' =>  $device['productName'],
-							'Seriennummer' => $device['sn'],
+					[
+						'name' =>  $device['deviceName'],
+						'productName' =>  $device['productName'],
+						'Seriennummer' => $device['sn'],
 
-							'InstanzID' => '0',
-							['EcoFlow_Data'],		
-								'create' => [	
-									'moduleID' => '{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}',
-									'configuration' => [ "accessKey" 			=> $accessKey,
-															"secretKey" 			=> $secretKey,
-															"Seriennummer"		=> $device['sn'],
-															"deviceName"			=> $device['productName']
-																]
-								]
+						'InstanzID' => '0',
+						['EcoFlow_Data'],		
+							'create' => [	
+								'moduleID' => $modultype,
+								'configuration' => [ "accessKey" 			=> $accessKey,
+														"secretKey" 			=> $secretKey,
+														"Seriennummer"		=> $device['sn'],
+														"deviceName"			=> $device['productName']
+															]
+							]
 
 						];
+					
 					$count = $count+1;
 
 					$no_new_devices = $count; 
@@ -138,7 +147,7 @@ declare(strict_types=1);
 						
 						$instance_match = false;
 						// schon verhandenes Gerät
-						foreach($availableDevices as  $key => $device)
+						foreach($availableDevices as  $key => $avdevice)
 						{	
 							if  ( $availableDevices[$key]['Seriennummer'] == IPS_GetProperty($instanceID,'Seriennummer') )
 							{
@@ -151,9 +160,8 @@ declare(strict_types=1);
 					
 						if (!$instance_match) // neues Geräte
 						{
-							//$availableDevices[$key]['productName'] = IPS_GetProperty($instanceID,'productName' );
-							$availableDevices[$key]['productName'] = 'Unkown';
-							$availableDevices[$key]['name'] = IPS_GetName($instanceID);	
+							$availableDevices[$key]['productName'] = $device['productName'];
+							$availableDevices[$key]['name'] = $device['deviceName'];	
 							$count = $count +1;
 						}
 					}
@@ -204,7 +212,6 @@ declare(strict_types=1);
 								'caption' => 'Seriennummer',
 								'width' => '300px'
 							]
-		
 					],
 					'values' => $availableDevices
 				]
