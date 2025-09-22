@@ -38,6 +38,9 @@ declare(strict_types=1);
 			}
 
 			$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
+
+			//$this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
+			
 			
 			$this->RegisterPropertyString("accessKey", "");
 			$this->RegisterPropertyString("secretKey", "");
@@ -91,7 +94,6 @@ declare(strict_types=1);
 			} 
 			$this->SetStatus(104); //noch inaktiv
 		
-			$filter = '.*' ."HW51ZEH49G941031". '.*';
 			$filter = '.*' .$SN. '.*';
 			
 			$this->SetReceiveDataFilter($filter);

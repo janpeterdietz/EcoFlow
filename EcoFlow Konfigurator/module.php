@@ -100,72 +100,84 @@ declare(strict_types=1);
 				
 				if (!array_key_exists('productName', $device)) 
 				{
-					$device +=  ['productName' => 'Unkown'];
+					$device +=  ['productName' => 'StreamAC'];
 				}
-				//else
-				{
+
 					    
-					//print_r($device);
-					if ($device['productName'] == 'PowerStream')
-					{
-						$modultype = '{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}';
-					}
-					else
-					{
-						$modultype = '{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}';
-					}
+				//print_r($device);
+				if ($device['productName'] == 'PowerStream')
+				{
+					$modultype = '{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}';
+				}
+				else if ($device['productName'] == 'StreamAC')
+				{
+					$modultype = '{9AA9E0BB-1467-5F91-09A4-023EAEA817E9}';
+				}
+				else
+				{
+					$this->LogMessage('Produkt unkown' , KL_NOTIFY);
+				}
 
-					$availableDevices[$count] = 
-					[
-						'name' =>  $device['deviceName'],
-						'productName' =>  $device['productName'],
-						'Seriennummer' => $device['sn'],
+				$availableDevices[$count] = [
+					'name' =>  $device['deviceName'],
+					'productName' =>  $device['productName'],
+					'Seriennummer' => $device['sn'],
 
-						'InstanzID' => '0',
-						['EcoFlow_Data'],		
-							'create' => [	
-								'moduleID' => $modultype,
-								'configuration' => [ "accessKey" 			=> $accessKey,
-														"secretKey" 			=> $secretKey,
-														"Seriennummer"		=> $device['sn'],
-														"deviceName"			=> $device['productName']
-															]
-							]
+					'InstanzID' => '0',
+					['EcoFlow_Data'],		
+						'create' => [	
+							'moduleID' => $modultype,
+							'configuration' => [ "accessKey" 			=> $accessKey,
+													"secretKey" 			=> $secretKey,
+													"Seriennummer"		=> $device['sn'],
+													"deviceName"			=> $device['productName']
+														]
+						]
 
-						];
-					
-					$count = $count+1;
+					];
+				
+				
+				//print_r($availableDevices);
+				$instance_match = false;
 
-					$no_new_devices = $count; 
-					$lostDevices = [];
-					$count = 0;
-					
-					//print_r($availableDevices);
-					
+			
+				if 	(!$instance_match )
+				{
 					foreach (IPS_GetInstanceListByModuleID('{34EFCF0A-61F9-AC7E-2967-8F2CF0146A41}') as $instanceID)
-					{
-						
-						$instance_match = false;
-						// schon verhandenes Gerät
-						foreach($availableDevices as  $key => $avdevice)
-						{	
-							if  ( $availableDevices[$key]['Seriennummer'] == IPS_GetProperty($instanceID,'Seriennummer') )
-							{
-								$availableDevices[$key]['instanceID'] = $instanceID;
-								$availableDevices[$key]['deviceName'] = IPS_GetProperty($instanceID,'deviceName' );
-								$availableDevices[$key]['name'] = IPS_GetName($instanceID);	
-								$instance_match = true;
-							}
-						}
-					
-						if (!$instance_match) // neues Geräte
+					{	
+							
+						if  ( $availableDevices[$count]['Seriennummer'] == IPS_GetProperty($instanceID,'Seriennummer') )
 						{
-							$availableDevices[$key]['productName'] = $device['productName'];
-							$availableDevices[$key]['name'] = $device['deviceName'];	
-							$count = $count +1;
-						}
+							$availableDevices[$count]['instanceID'] = $instanceID;
+							$availableDevices[$count]['deviceName'] = IPS_GetProperty($instanceID,'deviceName' );
+							$availableDevices[$count]['name'] = IPS_GetName($instanceID);	
+							$instance_match = true;
+						}				
 					}
 				}
+
+				if 	(!$instance_match )
+				{
+					foreach (IPS_GetInstanceListByModuleID('{9AA9E0BB-1467-5F91-09A4-023EAEA817E9}') as $instanceID)
+					{	
+							
+						if  ( $availableDevices[$count]['Seriennummer'] == IPS_GetProperty($instanceID,'Seriennummer') )
+						{
+							$availableDevices[$count]['instanceID'] = $instanceID;
+							$availableDevices[$count]['deviceName'] = IPS_GetProperty($instanceID,'deviceName' );
+							$availableDevices[$count]['name'] = IPS_GetName($instanceID);	
+							$instance_match = true;
+						}				
+					}
+				}
+				
+
+				if (!$instance_match) // neues Geräte
+				{
+					$availableDevices[$key]['productName'] = $device['productName'];
+					$availableDevices[$key]['name'] = $device['deviceName'];	
+				}
+				$count = $count +1;
 			}
 
 		$no_new_devices = $count; 
