@@ -358,7 +358,7 @@ declare(strict_types=1);
 			}
 
 			$Payload = json_decode($data['Payload'], true);
-			$this->LogMessage('ReceiveData' . print_r($Payload, true), KL_NOTIFY);
+			//$this->LogMessage('ReceiveData' . print_r($Payload, true), KL_NOTIFY);
 			
 
 			if (array_key_exists('param', $Payload))
