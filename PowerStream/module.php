@@ -361,9 +361,9 @@ declare(strict_types=1);
 			//$this->LogMessage('ReceiveData' . print_r($Payload, true), KL_NOTIFY);
 			
 
-			if (array_key_exists('param', $Payload))
+			if (array_key_exists('params', $Payload))
 			{
-				$Payload = $Payload['param'];
+				$Payload = $Payload['params'];
 
 				if (array_key_exists('utcTime', $Payload))
 				{

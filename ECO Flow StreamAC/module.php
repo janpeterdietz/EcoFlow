@@ -29,6 +29,14 @@ declare(strict_types=1);
 			$this->RegisterVariableFloat("acTotalActivePower", "acTotalActivePower", "~Watt", 12) ;
 			$this->RegisterVariableFloat("ongridInActivePower", "ongridInActivePower", "~Watt", 13) ;	
 			$this->RegisterVariableFloat("powGetSysLoadFromBp", "powGetSysLoadFromBp", "~Watt", 14) ;	
+			$this->RegisterVariableFloat("chgPowerLoopRef", "chgPowerLoopRef", "~Watt", 15) ;
+
+			$this->RegisterVariableFloat("chgFromGridPowerLimited", "chgFromGridPowerLimited", "~Watt", 16) ;
+
+
+
+
+
 			$this->RegisterVariableFloat("lanSysHomeNeedPwr", "lanSysHomeNeedPwr", "~Watt", 20) ;	
 			$this->RegisterVariableFloat("lanSysTargetPwr", "lanSysTargetPwr", "~Watt", 21) ;
 			$this->RegisterVariableFloat("powGetSysLoad", "powGetSysLoad", "~Watt", 40) ;
@@ -315,7 +323,7 @@ declare(strict_types=1);
 			}
 
 			$Payload = json_decode($data['Payload'], true);
-			//$this->LogMessage('ReceiveData' . print_r($Payload, true), KL_NOTIFY);
+			$this->LogMessage('ReceiveData' . print_r($Payload, true), KL_NOTIFY);
 			
 			if (array_key_exists('gridConnectionPower', $Payload))
 			{
@@ -357,6 +365,14 @@ declare(strict_types=1);
 				$this->setvalue("powGetSysLoad", $Payload['powGetSysLoad']);
 			}
 
+			if (array_key_exists('chgPowerLoopRef', $Payload))
+			{
+				$this->setvalue("chgPowerLoopRef", $Payload['chgPowerLoopRef']);
+			}
+
+
+
+
 
 			if (array_key_exists('bmsBattSoc', $Payload))
 			{
@@ -371,35 +387,16 @@ declare(strict_types=1);
 				$this->setvalue("loadPower", $Payload['dayResidentLoadList']['load'][0]['loadPower'],);
 			}
 
-
-			
-
-			if (array_key_exists('ReceiveDataArray', $Payload))
+			if (array_key_exists('allTimerTask', $Payload))
 			{
-				$this->LogMessage('ReceiveDataArray ddhdhh' . print_r($Payload, true), KL_NOTIFY);
-				
-				if (array_key_exists('invOutputWatts', $Payload))
-				{
-					$this->setvalue("OutputWatts", intval($Payload['invOutputWatts'])/10);
-				}
-
-				if (array_key_exists('geneWatt', $Payload))
-				{
-					$this->setvalue("geneWatt", intval($Payload['geneWatt'])/10);
-				}
-
-				
-				if (array_key_exists('pv1InputWatts', $Payload))
-				{
-					$this->setvalue("pv1InputWatts", intval($Payload['pv1InputWatts'])/10);
-				}
-				
-				if (array_key_exists('pv2InputWatts', $Payload))
-				{
-					$this->setvalue("pv2InputWatts", intval($Payload['pv2InputWatts'])/10);
-				}
-				
+				//$this->LogMessage('ReceiveDataArray Loadlist' . print_r($Payload['dayResidentLoadList'], true), KL_NOTIFY);
+				//$this->LogMessage('ReceiveDataArray Loadlist' . print_r($Payload['dayResidentLoadList']['load'][0]['loadPower'], true), KL_NOTIFY);
+							
+				$this->setvalue("chgFromGridPowerLimited", $Payload['allTimerTask']['timeTask'][0]['chgTask']['devTargetSoc'][0]['chgFromGridPowerLimited'],);
 			}
+
+
+		
 
 			if (array_key_exists('params', $Payload))
 			{
