@@ -139,7 +139,16 @@ declare(strict_types=1);
 			$Subscriptions = [$t1_full, $t2_full, $t3_full];
 
 			$old_config = IPS_GetConfiguration($id_Mqtt_Spliiter_Instance);
-			$this->LogMessage('Start MqttClient Splitter ' . $this->ReadPropertyString("deviceName") . print_r($old_config,true) , KL_NOTIFY);	
+			$old_Subscriptions = [];
+			if ($old_config)
+			{
+				$old_config = json_decode($old_config, true, 4);    
+				$old_Subscriptions = json_decode($old_config['Subscriptions'], true, 4);
+			}
+
+			$Subscriptions = array_merge($Subscriptions, $old_Subscriptions);
+
+			$this->LogMessage('Start MqttClient Splitter ' . $this->ReadPropertyString("deviceName") . print_r($Subscriptions,true) , KL_NOTIFY);	
 		
 
 			$config = array(
