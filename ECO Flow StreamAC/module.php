@@ -87,7 +87,6 @@ declare(strict_types=1);
 			} 
 			$this->SetStatus(104); //noch inaktiv
 		
-			$filter = '.*' ."HW51ZEH49G941031". '.*';
 			$filter = '.*' .$SN. '.*';
 			
 			$this->SetReceiveDataFilter($filter);
@@ -132,6 +131,10 @@ declare(strict_types=1);
 
 			$Subscriptions = [$t1_full, $t2_full, $t3_full];
 
+			$old_config = IPS_GetConfiguration(id_Mqtt_Spliiter_Instance);
+			$this->LogMessage('Start MqttClient Splitter ' . $this->ReadPropertyString("deviceName") . print_r(old_config,true) , KL_NOTIFY);	
+		
+
 			$config = array(
 				'ClientID'      => $ClientID,
 				'Password'      => $PW,
@@ -141,6 +144,7 @@ declare(strict_types=1);
 
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, json_encode($config,JSON_UNESCAPED_SLASHES)); 
 			IPS_Sleep(1*1000);
+			
 
 	
 			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
