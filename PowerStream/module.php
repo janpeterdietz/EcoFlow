@@ -150,6 +150,8 @@ declare(strict_types=1);
 
 		
 			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
+			$this->LogMessage('Start MqttClient Splitter ' . $this->ReadPropertyString("deviceName") , KL_NOTIFY);	
+			
 
 			if (!$result)
 			{

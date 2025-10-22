@@ -142,9 +142,10 @@ declare(strict_types=1);
 			IPS_SetConfiguration($id_Mqtt_Spliiter_Instance, json_encode($config,JSON_UNESCAPED_SLASHES)); 
 			IPS_Sleep(1*1000);
 
-		
+	
 			$result = IPS_ApplyChanges($id_Mqtt_Spliiter_Instance);
-
+			$this->LogMessage('Start MqttClient Splitter ' . $this->ReadPropertyString("deviceName") , KL_NOTIFY);	
+		
 			if (!$result)
 			{
 				$this->LogMessage('Start MqttClient Splitter ' . 'Mist aber auch', KL_NOTIFY);	
