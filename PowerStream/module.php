@@ -138,7 +138,7 @@ declare(strict_types=1);
 
 			$Subscriptions = [$t1_full, $t2_full, $t3_full];
 
-			$old_config = IPS_GetConfiguration(id_Mqtt_Spliiter_Instance);
+			$old_config = IPS_GetConfiguration($id_Mqtt_Spliiter_Instance);
 			$this->LogMessage('Start MqttClient Splitter ' . $this->ReadPropertyString("deviceName") . print_r(old_config,true) , KL_NOTIFY);	
 		
 
