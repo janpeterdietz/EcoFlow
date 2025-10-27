@@ -58,6 +58,9 @@ declare(strict_types=1);
 			$this->RegisterVariableFloat("geneWatt", "geneWatt", "~Watt", 30) ;
 			$this->RegisterVariableFloat("permanentWatts", "permanentWatts", "~Watt", 30) ;
 
+			$this->EnableAction('permanentWatts');
+		
+
 			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
 			$this->RegisterVariableInteger("invStatue", "inverter Status", "EF.Inverterstatus", 6) ;			
 			//Micro-inverter INV operating status: 1: IDEL; 2: START; ...check inv_logic; 6: successful grid connection

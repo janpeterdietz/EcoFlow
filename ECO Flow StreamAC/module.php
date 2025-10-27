@@ -23,6 +23,18 @@ declare(strict_types=1);
 			$this->RegisterAttributeString("Mqtt_Password", "");
 			$this->RegisterAttributeString("Mqtt_UserName", "");
 			$this->RegisterAttributeString("Mqtt_ClientID", "");
+
+			if (!IPS_VariableProfileExists('EF.feedGridMode')) 
+			{
+				IPS_CreateVariableProfile('EF.feedGridMode', VARIABLETYPE_INTEGER);
+				IPS_SetVariableProfileText('EF.feedGridMode', '', '');
+				IPS_SetVariableProfileValues ('EF.feedGridMode', 0, 1, 0);
+				
+				IPS_SetVariableProfileAssociation('EF.feedGridMode', 1, "Off","" , -1);
+				IPS_SetVariableProfileAssociation('EF.feedGridMode', 2, "On","" , -1);
+			}
+
+
 			
 			$this->RegisterVariableFloat("gridConnectionPower", "gridConnectionPower", "~Watt", 10) ;
 			$this->RegisterVariableFloat("sysGridConnectionPower", "sysGridConnectionPower", "~Watt",11) ;	
@@ -30,11 +42,11 @@ declare(strict_types=1);
 			$this->RegisterVariableFloat("ongridInActivePower", "ongridInActivePower", "~Watt", 13) ;	
 			$this->RegisterVariableFloat("powGetSysLoadFromBp", "powGetSysLoadFromBp", "~Watt", 14) ;	
 			$this->RegisterVariableFloat("chgPowerLoopRef", "chgPowerLoopRef", "~Watt", 15) ;
+		
+
+			$this->RegisterVariableFloat("chgPowerLoopRef", "chgPowerLoopRef", "~Watt", 15) ;
 
 			$this->RegisterVariableFloat("chgFromGridPowerLimited", "chgFromGridPowerLimited", "~Watt", 16) ;
-
-
-
 
 
 			$this->RegisterVariableFloat("lanSysHomeNeedPwr", "lanSysHomeNeedPwr", "~Watt", 20) ;	
@@ -47,18 +59,12 @@ declare(strict_types=1);
 			
 			$this->RegisterVariableFloat("bmsBattSoc", "bmsBattSoc", "~Valve.F", 30) ;
 
+			$this->RegisterVariableFloat("backupReverseSoc", "backupReverseSoc", "~Valve.F",32) ;
+			$this->EnableAction('backupReverseSoc');
 
-
-
-
-			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
-			$this->RegisterVariableInteger("invStatue", "inverter Status", "EF.Inverterstatus", 6) ;			
-			//Micro-inverter INV operating status: 1: IDEL; 2: START; ...check inv_logic; 6: successful grid connection
-			$this->setvalue("invStatue", 0);
-			
-			$this->RegisterVariableInteger("Status", "Status", "EF.Connectstatus", 30) ;
-			$this->setvalue("Status", 2);
-			//status iDevice online or not0: No, 1: Yes
+		
+			$this->RegisterVariableInteger("feedGridMode", "feedGridMode", "EF.feedGridMode", 30) ;
+			$this->EnableAction('feedGridMode');
 
 
 			$this->RegisterTimer("UpdateConnect", 0, 'EF_UpdateConnect(' . $this->InstanceID . ');');
@@ -231,18 +237,18 @@ declare(strict_types=1);
 
 	
 
-		public function setloadPower(float $value)
+		public function setbackupReverseSoc(float $value)
 		{
-			if ($value < 0)
+			if ($value < 3)
 			{
-				$value = 100;
+				$value = 3;
 			}
-			else if ($value > 800)
+			else if ($value > 95)
 			{
-				$value = 600;
+				$value = 95;
 			}
 
-			$value = (int)($value * 10); 
+			$value = (int)($value); 
 
 
 			$UserName = $this->ReadAttributeString('Mqtt_UserName');
@@ -251,11 +257,69 @@ declare(strict_types=1);
 			
 			$tsend =  '/open/'. $UserName. '/'. $SN .'/set';
 			
-			$params = ['powGetSysLoad' => $value];
+			$params = ['cfgBackupReverseSoc' => $value];
 
-			$payload = ['id' => 1,
+			$payload = ['id' => 123,
 						'version' =>"1.0",
-						'cmdCode' => "WN511_SET_PERMANENT_WATTS_PACK",
+						"cmdId" => 17,
+						"cmdFunc" => 254,
+						"dirDest" =>  1,
+						"dirSrc" =>  1,
+						"dest" => 2 ,
+						"needAck" => true,
+
+
+						"params" => $params ];
+						
+
+			$send_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 3,
+				'QualityOfService' => 0,
+				'Retain'           => true,
+				'Topic'            => $tsend,
+				'Payload'          => json_encode($payload)
+				];
+
+			$send_data_str = json_encode($send_data);
+
+
+			$this->Send($send_data_str);				
+		}
+
+		
+		public function setfeedGridMode(float $value)
+		{
+			if ($value < 1)
+			{
+				$value = 1;
+			}
+			else if ($value > 2)
+			{
+				$value = 2;
+			}
+
+			$value = (int)($value); 
+
+
+			$UserName = $this->ReadAttributeString('Mqtt_UserName');
+			$PW = $this->ReadAttributeString('Mqtt_Password');
+			$SN = $this->ReadPropertyString('Seriennummer');		
+			
+			$tsend =  '/open/'. $UserName. '/'. $SN .'/set';
+			
+			$params = ['cfgFeedGridMode' => $value];
+
+			$payload = ['id' => 123,
+						'version' =>"1.0",
+						"cmdId" => 17,
+						"cmdFunc" => 254,
+						"dirDest" =>  1,
+						"dirSrc" =>  1,
+						"dest" => 2 ,
+						"needAck" => true,
+
+
 						"params" => $params ];
 						
 
@@ -278,15 +342,21 @@ declare(strict_types=1);
 		public function RequestAction($Ident, $Value)
         {
             switch ($Ident) {
-                case 'loadPower':
-					$this->setloadpower($Value);
+                case 'backupReverseSoc':
+					$this->setbackupReverseSoc($Value);
 					break;
+
+				case 'feedGridMode':
+					$this->setfeedGridMode($Value);
+					break;
+
                 default:
                     $this->SendDebug(__FUNCTION__, 'Invalid Action: ' . $Ident, 0);
                     break;
             }
         }
-/*
+
+		/*
 		public function GetConfigurationForParent()
         {
 			$UserName = $this->ReadAttributeString('Mqtt_UserName');
@@ -338,7 +408,24 @@ declare(strict_types=1);
 
 			$Payload = json_decode($data['Payload'], true);
 
-			//$this->LogMessage('ReceiveData' . print_r($Payload, true), KL_NOTIFY);
+			// Daten nach Veränderung				
+			if (array_key_exists('data', $Payload))
+			{
+				$Payload = $Payload['data'];
+				$this->LogMessage('ReceiveDataArray SetDataConf_Data' . print_r($Payload, true), KL_NOTIFY);
+
+				if (array_key_exists('cfgBackupReverseSoc', $Payload))
+				{
+					$this->setvalue("backupReverseSoc", $Payload['cfgBackupReverseSoc']);
+				}
+
+				if (array_key_exists('cfgBackupReverseSoc', $Payload))
+				{
+					$this->setvalue("backupReverseSoc", $Payload['cfgBackupReverseSoc']);
+				}
+
+
+			}
 			
 			if (array_key_exists('gridConnectionPower', $Payload))
 			{
@@ -393,6 +480,20 @@ declare(strict_types=1);
 			{
 				$this->setvalue("bmsBattSoc", $Payload['bmsBattSoc']);
 			}
+
+			if (array_key_exists('backupReverseSoc', $Payload))
+			{
+				$this->setvalue("backupReverseSoc", $Payload['backupReverseSoc']);
+			}
+			
+			if (array_key_exists('feedGridMode', $Payload))
+			{
+				$this->setvalue("feedGridMode", $Payload['feedGridMode']);
+			}
+
+			
+
+			
 
 			if (array_key_exists('dayResidentLoadList', $Payload))
 			{
