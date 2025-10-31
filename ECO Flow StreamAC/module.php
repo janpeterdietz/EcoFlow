@@ -8,8 +8,6 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::Create();
 
-			
-
 			$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
 			//$this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
 
@@ -34,6 +32,16 @@ declare(strict_types=1);
 				IPS_SetVariableProfileAssociation('EF.feedGridMode', 2, "On","" , -1);
 			}
 
+			if (!IPS_VariableProfileExists('EF.status')) 
+			{
+				IPS_CreateVariableProfile('EF.status',VARIABLETYPE_BOOLEAN);
+				IPS_SetVariableProfileText('EF.status', '', '');
+				IPS_SetVariableProfileValues ('EF.status', 0, 1, 0);
+				
+				IPS_SetVariableProfileAssociation('EF.status', false, "Offline","" , -1);
+				IPS_SetVariableProfileAssociation('EF.status', true, "Online","" , -1);
+			}
+
 
 			
 			$this->RegisterVariableFloat("gridConnectionPower", "gridConnectionPower", "~Watt", 10) ;
@@ -41,8 +49,6 @@ declare(strict_types=1);
 			$this->RegisterVariableFloat("acTotalActivePower", "acTotalActivePower", "~Watt", 12) ;
 			$this->RegisterVariableFloat("ongridInActivePower", "ongridInActivePower", "~Watt", 13) ;	
 			$this->RegisterVariableFloat("powGetSysLoadFromBp", "powGetSysLoadFromBp", "~Watt", 14) ;	
-			$this->RegisterVariableFloat("chgPowerLoopRef", "chgPowerLoopRef", "~Watt", 15) ;
-		
 
 			$this->RegisterVariableFloat("chgPowerLoopRef", "chgPowerLoopRef", "~Watt", 15) ;
 
@@ -56,16 +62,32 @@ declare(strict_types=1);
 
 			$this->RegisterVariableFloat("loadPower", "loadPower", "~Watt", 41) ;
 			
-			
 			$this->RegisterVariableFloat("bmsBattSoc", "bmsBattSoc", "~Valve.F", 30) ;
 
 			$this->RegisterVariableFloat("backupReverseSoc", "backupReverseSoc", "~Valve.F",32) ;
 			$this->EnableAction('backupReverseSoc');
 
-		
+			$this->RegisterVariableFloat("cmsMaxChgSoc", "cmsMaxChgSoc", "~Valve.F",34) ;
+			$this->RegisterVariableFloat("cmsMinDsgSoc", "cmsMinDsgSoc", "~Valve.F",34) ;
+	
+			
+
+
+			$this->RegisterVariableBoolean("operateTouModeOpen", "operateTouModeOpen", "", 80) ;
+			$this->RegisterVariableBoolean("operateScheduledOpen", "operateScheduledOpen", "", 80) ;
+			$this->RegisterVariableBoolean("operateSelfPoweredOpen", "operateSelfPoweredOpen", "", 80) ;
+			$this->RegisterVariableBoolean("operateIntelligentScheduleModeOpen", "operateIntelligentScheduleModeOpen", "", 80) ;
+
+			$this->EnableAction('operateTouModeOpen');
+			$this->EnableAction('operateScheduledOpen');
+			$this->EnableAction('operateSelfPoweredOpen');
+			$this->EnableAction('operateIntelligentScheduleModeOpen');
+
+
 			$this->RegisterVariableInteger("feedGridMode", "feedGridMode", "EF.feedGridMode", 30) ;
 			$this->EnableAction('feedGridMode');
 
+			$this->RegisterVariableBoolean("status", "status", "EF.status", 30) ;
 
 			$this->RegisterTimer("UpdateConnect", 0, 'EF_UpdateConnect(' . $this->InstanceID . ');');
 			
@@ -237,6 +259,7 @@ declare(strict_types=1);
 
 	
 
+
 		public function setbackupReverseSoc(float $value)
 		{
 			if ($value < 3)
@@ -319,7 +342,6 @@ declare(strict_types=1);
 						"dest" => 2 ,
 						"needAck" => true,
 
-
 						"params" => $params ];
 						
 
@@ -337,7 +359,10 @@ declare(strict_types=1);
 
 			$this->Send($send_data_str);				
 		}
+
 		
+
+	
 
 		public function RequestAction($Ident, $Value)
         {
@@ -407,12 +432,13 @@ declare(strict_types=1);
 			}
 
 			$Payload = json_decode($data['Payload'], true);
+	
 
 			// Daten nach Veränderung				
 			if (array_key_exists('data', $Payload))
 			{
 				$Payload = $Payload['data'];
-				$this->LogMessage('ReceiveDataArray SetDataConf_Data' . print_r($Payload, true), KL_NOTIFY);
+				//$this->LogMessage('ReceiveDataArray SetDataConf_Data' . print_r($Payload, true), KL_NOTIFY);
 
 				if (array_key_exists('cfgBackupReverseSoc', $Payload))
 				{
@@ -423,10 +449,20 @@ declare(strict_types=1);
 				{
 					$this->setvalue("backupReverseSoc", $Payload['cfgBackupReverseSoc']);
 				}
-
-
 			}
+
 			
+			
+			if (array_key_exists('cmsMaxChgSoc', $Payload))
+			{
+				$this->setvalue("cmsMaxChgSoc", $Payload['cmsMaxChgSoc']);
+			}
+
+			if (array_key_exists('cmsMinDsgSoc', $Payload))
+			{
+				$this->setvalue("cmsMinDsgSoc", $Payload['cmsMinDsgSoc']);
+			}
+
 			if (array_key_exists('gridConnectionPower', $Payload))
 			{
 				$this->setvalue("gridConnectionPower", $Payload['gridConnectionPower']);
@@ -473,9 +509,6 @@ declare(strict_types=1);
 			}
 
 
-
-
-
 			if (array_key_exists('bmsBattSoc', $Payload))
 			{
 				$this->setvalue("bmsBattSoc", $Payload['bmsBattSoc']);
@@ -491,7 +524,32 @@ declare(strict_types=1);
 				$this->setvalue("feedGridMode", $Payload['feedGridMode']);
 			}
 
-			
+			if (array_key_exists('energyStrategyOperateMode', $Payload))
+			{
+				$this->LogMessage('ReceiveDataArray EnergyStrategy' . print_r($Payload, true), KL_NOTIFY);
+				$Payload = $Payload['energyStrategyOperateMode'];
+
+				if (array_key_exists('operateTouModeOpen', $Payload))
+				{
+					$this->setvalue("operateTouModeOpen", $Payload['operateTouModeOpen']);
+				}	
+
+				if (array_key_exists('operateScheduledOpen', $Payload))
+				{
+					$this->setvalue("operateScheduledOpen", $Payload['operateScheduledOpen']);
+				}
+
+
+				if (array_key_exists('operateSelfPoweredOpen', $Payload))
+				{
+					$this->setvalue("operateSelfPoweredOpen", $Payload['operateSelfPoweredOpen']);
+				}	
+
+				if (array_key_exists('operateScheduledOpen', $Payload))
+				{
+					$this->setvalue("operateIntelligentScheduleModeOpen", $Payload['operateIntelligentScheduleModeOpen']);
+				}	
+			}
 
 			
 
@@ -519,7 +577,7 @@ declare(strict_types=1);
 				$Payload = $Payload['params'];
 				if (array_key_exists('status', $Payload))
 				{
-					$this->setvalue("Status", $Payload['status']);
+					$this->setvalue("status", $Payload['status']);
 				}
 			}
 		}
