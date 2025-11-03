@@ -88,6 +88,8 @@ declare(strict_types=1);
 			$this->EnableAction('feedGridMode');
 
 			$this->RegisterVariableBoolean("status", "status", "EF.status", 30) ;
+			$this->RegisterVariableInteger("LastUpdateTime", "Letztes Update", "~UnixTimestamp", 5) ;
+		
 
 			$this->RegisterTimer("UpdateConnect", 0, 'EF_UpdateConnect(' . $this->InstanceID . ');');
 			
@@ -452,6 +454,12 @@ declare(strict_types=1);
 			}
 
 			
+
+			if (array_key_exists('quota_cloud_ts', $Payload))
+			{
+				$this->setvalue("LastUpdateTime", $Payload['quota_cloud_ts']);
+			}
+
 			
 			if (array_key_exists('cmsMaxChgSoc', $Payload))
 			{
