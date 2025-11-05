@@ -58,9 +58,6 @@ declare(strict_types=1);
 			$this->RegisterVariableFloat("lanSysHomeNeedPwr", "lanSysHomeNeedPwr", "~Watt", 20) ;	
 			$this->RegisterVariableFloat("lanSysTargetPwr", "lanSysTargetPwr", "~Watt", 21) ;
 			$this->RegisterVariableFloat("powGetSysLoad", "powGetSysLoad", "~Watt", 40) ;
-
-
-			$this->RegisterVariableFloat("loadPower", "loadPower", "~Watt", 41) ;
 			
 			$this->RegisterVariableFloat("bmsBattSoc", "bmsBattSoc", "~Valve.F", 30) ;
 
@@ -69,17 +66,22 @@ declare(strict_types=1);
 
 			$this->RegisterVariableFloat("cmsMaxChgSoc", "cmsMaxChgSoc", "~Valve.F",34) ;
 			$this->RegisterVariableFloat("cmsMinDsgSoc", "cmsMinDsgSoc", "~Valve.F",34) ;
-	
-
-			$this->RegisterVariableBoolean("operateTouModeOpen", "operateTouModeOpen", "", 80) ;
-			$this->RegisterVariableBoolean("operateScheduledOpen", "operateScheduledOpen", "", 80) ;
-			$this->RegisterVariableBoolean("operateSelfPoweredOpen", "operateSelfPoweredOpen", "", 80) ;
-			$this->RegisterVariableBoolean("operateIntelligentScheduleModeOpen", "operateIntelligentScheduleModeOpen", "", 80) ;
-
-			$this->EnableAction('operateTouModeOpen');
-			$this->EnableAction('operateScheduledOpen');
-			$this->EnableAction('operateSelfPoweredOpen');
-			$this->EnableAction('operateIntelligentScheduleModeOpen');
+		
+			if (!IPS_VariableProfileExists('EF.operateMode')) 
+			{
+				IPS_CreateVariableProfile('EF.operateMode', VARIABLETYPE_INTEGER);
+				IPS_SetVariableProfileText('EF.operateMode', '', '');
+				IPS_SetVariableProfileValues ('EF.operateMode', 0, 1, 0);
+				
+				IPS_SetVariableProfileAssociation('EF.operateMode', 1, "operateTouModeOpen","" , -1);
+				IPS_SetVariableProfileAssociation('EF.operateMode', 2, "operateScheduledOpen","" , -1);
+				IPS_SetVariableProfileAssociation('EF.operateMode', 3, "operateSelfPoweredOpen","" , -1);
+				IPS_SetVariableProfileAssociation('EF.operateMode', 4, "operateIntelligentScheduleModeOpen","" , -1);
+			}
+			
+			$this->RegisterVariableInteger("operateMode", "operateMode", "EF.operateMode", 80) ;
+			$this->EnableAction('operateMode');
+		
 
 
 			$this->RegisterVariableInteger("feedGridMode", "feedGridMode", "EF.feedGridMode", 30) ;
@@ -261,7 +263,7 @@ declare(strict_types=1);
 	
 
 
-		public function setbackupReverseSoc(float $value)
+		public function setbackupReverseSoc(int $value)
 		{
 			if ($value < 3)
 			{
@@ -312,13 +314,13 @@ declare(strict_types=1);
 		}
 
 		
-		public function setfeedGridMode(float $value)
+		public function setfeedGridMode(int $value)
 		{
-			if ($value < 1)
+			if ($value <= 1)
 			{
 				$value = 1;
 			}
-			else if ($value > 2)
+			else if ($value >= 2)
 			{
 				$value = 2;
 			}
@@ -360,7 +362,75 @@ declare(strict_types=1);
 
 			$this->Send($send_data_str);				
 		}
+		
+		public function setoperateMode(int $value)
+		{
+			if ($value <= 1)
+			{
+				$value = 1;
+			}
+			else if ($value >= 4)
+			{
+				$value = 4;
+			}
 
+			$value = (int)($value); 
+
+
+			$UserName = $this->ReadAttributeString('Mqtt_UserName');
+			$PW = $this->ReadAttributeString('Mqtt_Password');
+			$SN = $this->ReadPropertyString('Seriennummer');		
+			
+			$tsend =  '/open/'. $UserName. '/'. $SN .'/set';
+
+			$this->LogMessage('setoperateMode' . "Value ". $value, KL_NOTIFY);
+
+			switch ($value) 
+			{
+				case 1:
+					$params = ['cfgEnergyStrategyOperateMode' => ['operateTouModeOpen' => true]];
+					break;
+				case 2:
+					$params = ['cfgEnergyStrategyOperateMode' => ['operateScheduledOpen' => true]];
+					break;
+				case 3:
+					$params = ['cfgEnergyStrategyOperateMode' => ['operateSelfPoweredOpen' => true]];
+					break;
+				case 4:
+					$params = ['cfgEnergyStrategyOperateMode' => ['operateIntelligentScheduleModeOpen' => true]];
+					break;
+				
+				default:
+					# code...
+					break;
+			}
+
+			$payload = ['id' => 123,
+						'version' =>"1.0",
+						"cmdId" => 17,
+						"cmdFunc" => 254,
+						"dirDest" =>  1,
+						"dirSrc" =>  1,
+						"dest" => 2 ,
+						"needAck" => true,
+
+						"params" => $params ];
+						
+
+			$send_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 3,
+				'QualityOfService' => 0,
+				'Retain'           => true,
+				'Topic'            => $tsend,
+				'Payload'          => json_encode($payload)
+				];
+
+			$send_data_str = json_encode($send_data);
+
+
+			$this->Send($send_data_str);				
+		}
 		
 
 	
@@ -375,6 +445,11 @@ declare(strict_types=1);
 				case 'feedGridMode':
 					$this->setfeedGridMode($Value);
 					break;
+
+				case 'operateMode':
+					$this->setoperateMode($Value);
+					break;
+
 
                 default:
                     $this->SendDebug(__FUNCTION__, 'Invalid Action: ' . $Ident, 0);
@@ -417,7 +492,7 @@ declare(strict_types=1);
 		public function Send(string $PayLoad)
 		{
 			
-			$this->LogMessage('SendData '. $PayLoad,KL_NOTIFY );
+			$this->LogMessage('SendData '. $PayLoad, KL_NOTIFY );
 			$this->SendDataToParent($PayLoad);
 		}
 		
@@ -439,17 +514,20 @@ declare(strict_types=1);
 			if (array_key_exists('data', $Payload))
 			{
 				$Payload = $Payload['data'];
-				//$this->LogMessage('ReceiveDataArray SetDataConf_Data' . print_r($Payload, true), KL_NOTIFY);
+				$this->LogMessage('ReceiveDataArray SetDataConf_Data' . print_r($Payload, true), KL_NOTIFY);
 
 				if (array_key_exists('cfgBackupReverseSoc', $Payload))
 				{
 					$this->setvalue("backupReverseSoc", $Payload['cfgBackupReverseSoc']);
+					$this->LogMessage('ReceiveData' . "Daten backupReverseSoc", KL_NOTIFY);
 				}
 
-				if (array_key_exists('cfgBackupReverseSoc', $Payload))
+				if (array_key_exists('cfgFeedGridMode', $Payload))
 				{
-					$this->setvalue("backupReverseSoc", $Payload['cfgBackupReverseSoc']);
+					$this->setvalue("feedGridMode", $Payload['cfgFeedGridMode']);
+					$this->LogMessage('ReceiveData' . "Daten cfgFeedGridMode", KL_NOTIFY);
 				}
+
 			}
 
 			
@@ -533,51 +611,45 @@ declare(strict_types=1);
 
 			if (array_key_exists('energyStrategyOperateMode', $Payload))
 			{
-				$this->LogMessage('ReceiveDataArray EnergyStrategy' . print_r($Payload, true), KL_NOTIFY);
+						
 				$Payload = $Payload['energyStrategyOperateMode'];
+				$this->LogMessage('ReceiveData EnergyStrategy' . print_r($Payload, true), KL_NOTIFY);
+		
 
 				if (array_key_exists('operateTouModeOpen', $Payload))
 				{
-					$this->setvalue("operateTouModeOpen", $Payload['operateTouModeOpen']);
+					if ($Payload['operateTouModeOpen'])
+					{
+						$this->setvalue("operateMode", 1);
+					}		
 				}	
 
 				if (array_key_exists('operateScheduledOpen', $Payload))
 				{
-					$this->setvalue("operateScheduledOpen", $Payload['operateScheduledOpen']);
+					if ($Payload['operateScheduledOpen'])
+					{
+						$this->setvalue("operateMode", 2);
+					}	
 				}
 
 
 				if (array_key_exists('operateSelfPoweredOpen', $Payload))
 				{
-					$this->setvalue("operateSelfPoweredOpen", $Payload['operateSelfPoweredOpen']);
+					if ($Payload['operateSelfPoweredOpen'])
+					{
+						$this->setvalue("operateMode", 3);
+					}	
 				}	
 
 				if (array_key_exists('operateScheduledOpen', $Payload))
 				{
-					$this->setvalue("operateIntelligentScheduleModeOpen", $Payload['operateIntelligentScheduleModeOpen']);
+					if ($Payload['operateIntelligentScheduleModeOpen'])
+					{
+						$this->setvalue("operateMode", 4);
+					}	
 				}	
 			}
-
-			
-
-			if (array_key_exists('dayResidentLoadList', $Payload))
-			{
-				//$this->LogMessage('ReceiveDataArray Loadlist' . print_r($Payload['dayResidentLoadList'], true), KL_NOTIFY);
-				//$this->LogMessage('ReceiveDataArray Loadlist' . print_r($Payload['dayResidentLoadList']['load'][0]['loadPower'], true), KL_NOTIFY);
-							
-				$this->setvalue("loadPower", $Payload['dayResidentLoadList']['load'][0]['loadPower'],);
-			}
-
-			if (array_key_exists('allTimerTask', $Payload))
-			{
-				//$this->LogMessage('ReceiveDataArray Loadlist' . print_r($Payload['dayResidentLoadList'], true), KL_NOTIFY);
-				//$this->LogMessage('ReceiveDataArray Loadlist' . print_r($Payload['dayResidentLoadList']['load'][0]['loadPower'], true), KL_NOTIFY);
-							
-				$this->setvalue("chgFromGridPowerLimited", $Payload['allTimerTask']['timeTask'][0]['chgTask']['devTargetSoc'][0]['chgFromGridPowerLimited'],);
-			}
-
-
-		
+	
 
 			if (array_key_exists('params', $Payload))
 			{
