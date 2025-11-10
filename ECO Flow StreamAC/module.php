@@ -132,7 +132,7 @@ declare(strict_types=1);
 			if ($response['message'] != 'Success')
 			{
 				$this->SetStatus(200); //One of the Variable is missing
-				$this->LogMessage('Start getMQTTCertification Daten falsch'. json_encode($response) , KL_NOTIFY);
+				$this->LogMessage('Start getMQTTCertification Daten falsch'. json_encode($response) , KL_WARNING);
 				return;
 			}
 
@@ -504,7 +504,7 @@ declare(strict_types=1);
 			
 			if ($data === false)
 			{
-				$this->LogMessage('ReceiveData' . "Daten Fehlerhaft", KL_NOTIFY);
+				$this->LogMessage('ReceiveData' . "Daten Fehlerhaft", KL_WARNING);
 			}
 
 			$Payload = json_decode($data['Payload'], true);
@@ -514,7 +514,7 @@ declare(strict_types=1);
 			if (array_key_exists('data', $Payload))
 			{
 				$Payload = $Payload['data'];
-				$this->LogMessage('ReceiveDataArray SetDataConf_Data' . print_r($Payload, true), KL_NOTIFY);
+				//$this->LogMessage('ReceiveDataArray SetDataConf_Data' . print_r($Payload, true), KL_NOTIFY);
 
 				if (array_key_exists('cfgBackupReverseSoc', $Payload))
 				{
@@ -613,7 +613,7 @@ declare(strict_types=1);
 			{
 						
 				$Payload = $Payload['energyStrategyOperateMode'];
-				$this->LogMessage('ReceiveData EnergyStrategy' . print_r($Payload, true), KL_NOTIFY);
+				//$this->LogMessage('ReceiveData EnergyStrategy' . print_r($Payload, true), KL_NOTIFY);
 		
 
 				if (array_key_exists('operateTouModeOpen', $Payload))
