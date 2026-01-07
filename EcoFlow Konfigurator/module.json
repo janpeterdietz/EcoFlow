@@ -4,9 +4,7 @@
     "type": 4,
     "vendor": "EcoFlow",
     "aliases": [],
-    "parentRequirements": [
-        "{018EF6B5-AB94-40C6-AA53-46943E824ACF}"
-    ],
+    "parentRequirements": [],
     "childRequirements": [],
     "implemented":    [ "{7F7632D9-FA40-4F38-8DEA-C83CD4325A32}"
 ],
