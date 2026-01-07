@@ -100,9 +100,16 @@ declare(strict_types=1);
 				
 				if (!array_key_exists('productName', $device)) 
 				{
-					$device +=  ['productName' => 'StreamAC'];
+					if ( substr( $device['deviceName'], 0, 9)  == 'STREAM AC')
+					{
+						$device +=  ['productName' => 'StreamAC'];
+						//$this->LogMessage('Produkt unkown, repleace to Stream AC' , KL_NOTIFY);
+					}
+					else
+					{
+						$this->LogMessage('Produkt unkown, ' . $device['deviceName'], KL_NOTIFY);
+					}
 				}
-
 					    
 				//print_r($device);
 				if ($device['productName'] == 'PowerStream')
