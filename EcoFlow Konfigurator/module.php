@@ -13,10 +13,33 @@ declare(strict_types=1);
 			$this->RegisterPropertyString("accessKey", "");
 			$this->RegisterPropertyString("secretKey", "");
 
-			$this->RegisterAttributeString("Mqtt_Password", "");
-			$this->RegisterAttributeString("Mqtt_UserName", "");
-			$this->RegisterAttributeString("Mqtt_ClientID", "");
+			//$this->RegisterAttributeString("Mqtt_Password", "");
+			//$this->RegisterAttributeString("Mqtt_UserName", "");
+			//$this->RegisterAttributeString("Mqtt_ClientID", "");
 		}
+
+			// Benötige einen MQTT Client mit einer spezifischen Client ID
+		// Falls ein neues Gateway erstellt wird, wird entgegen des üblichen Initialwerts ein KeepAlive Intervall von 10 Sekunden eingetragen, kann aber angepasst werden.
+		public function GetCompatibleParents() 
+		{
+			return '{"type": "connect", "modules": [{
+				"moduleID": "{F7A0DD2E-7684-95C0-64C2-D2A9DC47577BA}"
+			}]}';
+		}
+		/*public function GetCompatibleParents() 
+		{
+			
+		
+			return '{"type": "connect", "modules": [{
+				"moduleID": "{F7A0DD2E-7684-95C0-64C2-D2A9DC47577BA}",
+				"configuration": {
+					"ClientID": "b10c75459d64cafb5d78"
+				},
+				"initial": {
+					"KeepAliveInterval": 10
+				}
+			}]}';
+		}*/
 
 		public function Destroy()
 		{
@@ -28,10 +51,10 @@ declare(strict_types=1);
 		{
 			//Never delete this line!
 			parent::ApplyChanges();
-
+			/*
 			$filter = '.*' . '"' . "Konfiguration". '"'. '.*';
 			$this->SetReceiveDataFilter($filter);
-
+			*/
 			$accessKey = $this->ReadPropertyString("accessKey");
 			$secretKey = $this->ReadPropertyString("secretKey");
 	
@@ -49,9 +72,9 @@ declare(strict_types=1);
 				$this->SetStatus(200); //vermutlich stimmmt der Account nicht
 				return;
 			}
-
-			$this->WriteAttributeString("Mqtt_ClientID", substr( $newdevices['eagleEyeTraceId'], 0, 22));
 			
+		
+
 			
 			$response = $this->getMQTTCertification();
 			if ($response['message'] != 'Success')
@@ -60,11 +83,115 @@ declare(strict_types=1);
 				$this->LogMessage('Start getMQTTCertification Daten falsch'. json_encode($response) , KL_NOTIFY);
 				return;
 			}
-
-			$this->WriteAttributeString("Mqtt_Password", $response['data']['certificatePassword']);
-			$this->WriteAttributeString("Mqtt_UserName", $response['data']['certificateAccount']);
+			$this->LogMessage('Start getMQTTCertification Daten richtig'. json_encode($response) , KL_NOTIFY);
 			
+			$this->LogMessage('Self ' . $this->InstanceID  , KL_NOTIFY);
+			//$this->LogMessage('Parent'. $this->GetConfigurationForParent() , KL_NOTIFY);
+			
+			$this->LogMessage('ApplyChanges', KL_NOTIFY);
+		
+			return;
+
+
 			$this->SetStatus(102); //aktiv
+
+
+			$mqtt_url 	= $response['data']['url'];
+			$mqtt_port 	= $response['data']['port'];
+
+
+			// Prüfung ob der Socket schon da ist
+			$id_mqtt_Client_Socket_ID = 0;
+
+			$guid = "{3CFF0FD9-E306-41DB-9B5A-9D06D38576C3}";
+			$sockets = IPS_GetInstanceListByModuleID($guid);
+
+			if ($sockets !== false)
+			{
+				foreach ($sockets as $key => $instance_id)
+				{
+					if ( IPS_GetName($instance_id) == "MQTT Client Socket EcoFlow")
+					{
+						$id_mqtt_Client_Socket_ID = $instance_id;
+						break;
+					}
+				}
+			}
+
+			if ($id_mqtt_Client_Socket_ID == 0)
+			{
+				$id_mqtt_Client_Socket_ID = IPS_CreateInstance($guid);
+				IPS_SetName($id_mqtt_Client_Socket_ID, "MQTT Client Socket EcoFlow");
+			}
+
+
+			$config = [
+						'Host'      => $mqtt_url,
+						'Open'      => false,
+						'Port'      => $mqtt_port,
+						'UseSSL'    => true,
+						'VerifyHost'=> true,
+						'VerifyPeer'=> false
+						];
+
+			IPS_SetConfiguration($id_mqtt_Client_Socket_ID, json_encode($config));
+			IPS_ApplyChanges($id_mqtt_Client_Socket_ID); //Neue Konfiguration übernehmen    
+			IPS_Sleep(2000);
+
+
+			$PW = $response['data']['certificatePassword'];
+			$UserName = $response['data']['certificateAccount'];
+
+			$ClientID = substr( $response['eagleEyeTraceId'], 0, 21);
+			if ($ClientID == "")
+			{
+				$ClientID = substr( strval( random_int(10000000,999999999)),0,21);
+			}
+			
+			// Prüfung ob der Mqtt Client Socket schon da ist
+			$id_mqtt_Client_ID = 0;
+
+			$guid ="{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}";
+			$sockets = IPS_GetInstanceListByModuleID($guid);
+
+			if ($sockets !== false)
+			{
+				foreach ($sockets as $key => $instance_id)
+				{
+					if ( IPS_GetName($instance_id) ==  "MQTT Client EcoFlow" )
+					{
+						$id_mqtt_Client_ID = $instance_id;
+						break;
+					}
+				}
+			}
+
+			if ($id_mqtt_Client_ID == 0)
+			{
+				$id_mqtt_Client_ID = IPS_CreateInstance($guid);
+				IPS_SetName($id_mqtt_Client_ID, "MQTT Client EcoFlow");
+			}
+			
+			//IPS_SetParent($id_mqtt_Client_ID, $id_mqtt_Client_Socket_ID);
+
+			$config = array(
+				'ClientID'      => $ClientID,
+				'Password'      => $PW,
+				'UserName'      => $UserName
+				);
+				//'Subscriptions' => json_encode($Subscriptions,JSON_UNESCAPED_SLASHES),
+
+
+
+			IPS_SetConfiguration($id_mqtt_Client_ID, json_encode($config,JSON_UNESCAPED_SLASHES)); 
+			IPS_ApplyChanges($id_mqtt_Client_ID); //Neue Konfiguration übernehmen    
+			
+			/* 
+			IPS_Sleep(2000);	
+
+			IPS_SetProperty($id_mqtt_Client_Socket_ID, 'Open', true);
+			IPS_ApplyChanges($id_mqtt_Client_Socket_ID); //Neue Konfiguration übernehmen    
+			*/
 		}
 
 

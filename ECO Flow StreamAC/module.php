@@ -8,7 +8,7 @@ declare(strict_types=1);
 			//Never delete this line!
 			parent::Create();
 
-			$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
+			//$this->RequireParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
 			//$this->ConnectParent('{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}');
 
 			
@@ -96,6 +96,19 @@ declare(strict_types=1);
 			
 		}
 
+		public function GetCompatibleParents() 
+		{
+			return '{"type": "connect", "modules": [{
+				"moduleID": "{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}",
+				"configuration": {
+					"ClientID": "b10c75459d64cafb5d78"
+				},
+				"initial": {
+					"KeepAliveInterval": 10
+				}
+			}]}';
+		}
+
 		public function Destroy()
 		{
 			//Never delete this line!
@@ -122,7 +135,7 @@ declare(strict_types=1);
 			
 			$this->SetReceiveDataFilter($filter);
 
-			
+			return;
 			$response = $this->getMQTTCertification();
 
 			$this->WriteAttributeString("Mqtt_ClientID", substr( $response['eagleEyeTraceId'], 0, 21));
