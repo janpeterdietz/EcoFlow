@@ -286,14 +286,14 @@ declare(strict_types=1);
 			$params = ['cfgBackupReverseSoc' => $value];
 
 			$payload = ['id' => 123,
-						'version' =>"1.0",
+						'version' => "1.0",
+						'sn' => $SN,
 						"cmdId" => 17,
 						"cmdFunc" => 254,
 						"dirDest" =>  1,
 						"dirSrc" =>  1,
 						"dest" => 2 ,
 						"needAck" => true,
-
 
 						"params" => $params ];
 						
@@ -338,6 +338,7 @@ declare(strict_types=1);
 
 			$payload = ['id' => 123,
 						'version' =>"1.0",
+						'sn' => $SN,
 						"cmdId" => 17,
 						"cmdFunc" => 254,
 						"dirDest" =>  1,
