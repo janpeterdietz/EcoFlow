@@ -104,7 +104,7 @@ declare(strict_types=1);
 					"ClientID": "b10c75459d64cafb5d78"
 				},
 				"initial": {
-					"KeepAliveInterval": 10
+					"KeepAliveInterval": 60
 				}
 			}]}';
 		}
