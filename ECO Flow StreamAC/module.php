@@ -403,7 +403,7 @@ declare(strict_types=1);
 			{
 				case 1:
 					//$params = ['cfgEnergyStrategyOperateMode' => ['operateTouModeOpen' => true]];
-					$params = ['cfgpowGetSysGrid' => 324];
+					$params = ['cfgpowSetSysGrid' => 324];
 					
 					break;
 				case 2:
