@@ -82,10 +82,10 @@ declare(strict_types=1);
 			$this->RegisterVariableInteger("operateMode", "operateMode", "EF.operateMode", 80) ;
 			$this->EnableAction('operateMode');
 
-			$this->RegisterVariableBoolean("feedGridMode", "feedGridMode", "", 81) ;
-			$this->RegisterVariableBoolean("feedGridMode", "feedGridMode", "", 82) ;
-			$this->RegisterVariableBoolean("feedGridMode", "feedGridMode", "", 83) ;
-			$this->RegisterVariableBoolean("feedGridMode", "feedGridMode", "", 84) ;
+			$this->RegisterVariableBoolean("operateTouModeOpen", "operateTouModeOpen", "", 81) ;
+			$this->RegisterVariableBoolean("operateScheduledOpen", "operateScheduledOpen", "", 82) ;
+			$this->RegisterVariableBoolean("operateSelfPoweredOpen", "operateSelfPoweredOpen", "", 83) ;
+			$this->RegisterVariableBoolean("operateIntelligentScheduleModeOpen", "operateIntelligentScheduleModeOpen", "", 84) ;
 		
 			
 		
