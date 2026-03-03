@@ -663,13 +663,13 @@ declare(strict_types=1);
 	
 				}	
 
-				if (array_key_exists('operateScheduledOpen', $Payload))
+				if (array_key_exists('operateIntelligentScheduleModeOpen', $Payload))
 				{
 					if ($Payload['operateIntelligentScheduleModeOpen'])
 					{
 						$this->setvalue("operateMode", 4);
 					}	
-					$this->setvalue("operateScheduledOpen", $Payload['operateScheduledOpen']);
+					$this->setvalue("operateIntelligentScheduleModeOpen", $Payload['operateIntelligentScheduleModeOpen']);
 				}	
 			}
 	
