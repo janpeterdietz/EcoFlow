@@ -298,7 +298,7 @@ declare(strict_types=1);
 			
 			$params = ['cfgBackupReverseSoc' => $value];
 
-			$payload = ['id' => 123,
+			$payload = ['id' => time(),
 						'version' => "1.0",
 						'sn' => $SN,
 						"cmdId" => 17,
@@ -349,7 +349,7 @@ declare(strict_types=1);
 			
 			$params = ['cfgFeedGridMode' => $value];
 
-			$payload = ['id' => 123,
+			$payload = ['id' => time(),
 						'version' =>"1.0",
 						'sn' => $SN,
 						"cmdId" => 17,
@@ -403,7 +403,8 @@ declare(strict_types=1);
 			{
 				case 1:
 					//$params = ['cfgEnergyStrategyOperateMode' => ['operateTouModeOpen' => true]];
-					return;
+					$params = ['powSetSysGrid' => ['powSetSysGrid' => 324]];
+					
 					break;
 				case 2:
 					//$params = ['cfgEnergyStrategyOperateMode' => ['operateScheduledOpen' => true]];
@@ -421,7 +422,7 @@ declare(strict_types=1);
 					break;
 			}
 
-			$payload = ['id' => 123,
+			$payload = ['id' => time(),
 						'version' =>"1.0",
 						"cmdId" => 17,
 						"cmdFunc" => 254,
@@ -921,4 +922,7 @@ declare(strict_types=1);
 
 
 
+
+
+	
 	
