@@ -389,10 +389,12 @@ declare(strict_types=1);
 			switch ($value) 
 			{
 				case 1:
-					$params = ['cfgEnergyStrategyOperateMode' => ['operateTouModeOpen' => true]];
+					//$params = ['cfgEnergyStrategyOperateMode' => ['operateTouModeOpen' => true]];
+					return;
 					break;
 				case 2:
-					$params = ['cfgEnergyStrategyOperateMode' => ['operateScheduledOpen' => true]];
+					//$params = ['cfgEnergyStrategyOperateMode' => ['operateScheduledOpen' => true]];
+					return;
 					break;
 				case 3:
 					$params = ['cfgEnergyStrategyOperateMode' => ['operateSelfPoweredOpen' => true]];
