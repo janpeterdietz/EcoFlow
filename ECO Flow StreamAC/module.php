@@ -403,11 +403,12 @@ declare(strict_types=1);
 			{
 				case 1:
 					//$params = ['cfgEnergyStrategyOperateMode' => ['operateTouModeOpen' => true]];
-					return;
+							$params = ['cfgEnergyStrategyOperateMode' => ['operateSelfPoweredOpen' => false]];
 					break;
 				case 2:
 					//$params = ['cfgEnergyStrategyOperateMode' => ['operateScheduledOpen' => true]];
-					return;
+						$params = ['cfgEnergyStrategyOperateMode' => ['operateIntelligentScheduleModeOpen' => false]];
+					
 					break;
 				case 3:
 					$params = ['cfgEnergyStrategyOperateMode' => ['operateSelfPoweredOpen' => true]];
