@@ -104,8 +104,12 @@ declare(strict_types=1);
 			
 			$response = $this->getMQTTCertification();
 
-			$this->WriteAttributeString("Mqtt_ClientID", substr( $response['eagleEyeTraceId'], 0, 21));
-			$ClientID = $this->ReadAttributeString("Mqtt_ClientID");
+			
+			$ClientID = substr( $response['eagleEyeTraceId'], 0, 21);
+			if ($ClientID == "")
+			{
+				$ClientID = substr( strval( random_int(10000000,999999999)),0,21);
+			}
 
 	
 			if ($response['message'] != 'Success')
