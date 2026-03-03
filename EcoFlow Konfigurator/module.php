@@ -50,7 +50,14 @@ declare(strict_types=1);
 				return;
 			}
 
-			$this->WriteAttributeString("Mqtt_ClientID", substr( $newdevices['eagleEyeTraceId'], 0, 22));
+
+			$ClientID = substr( $newdevices['eagleEyeTraceId'], 0, 21);
+			if ($ClientID == "")
+			{
+				$ClientID = substr( strval( random_int(10000000,999999999)),0,21);
+			}
+
+			$this->WriteAttributeString("Mqtt_ClientID",$ClientID);
 			
 			
 			$response = $this->getMQTTCertification();
