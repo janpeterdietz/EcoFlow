@@ -81,6 +81,13 @@ declare(strict_types=1);
 			
 			$this->RegisterVariableInteger("operateMode", "operateMode", "EF.operateMode", 80) ;
 			$this->EnableAction('operateMode');
+
+			$this->RegisterVariableBoolean("feedGridMode", "feedGridMode", "", 81) ;
+			$this->RegisterVariableBoolean("feedGridMode", "feedGridMode", "", 82) ;
+			$this->RegisterVariableBoolean("feedGridMode", "feedGridMode", "", 83) ;
+			$this->RegisterVariableBoolean("feedGridMode", "feedGridMode", "", 84) ;
+		
+			
 		
 
 
@@ -630,7 +637,9 @@ declare(strict_types=1);
 					if ($Payload['operateTouModeOpen'])
 					{
 						$this->setvalue("operateMode", 1);
-					}		
+					}
+					$this->setvalue("operateTouModeOpen", $Payload['operateTouModeOpen']);
+		
 				}	
 
 				if (array_key_exists('operateScheduledOpen', $Payload))
@@ -638,7 +647,9 @@ declare(strict_types=1);
 					if ($Payload['operateScheduledOpen'])
 					{
 						$this->setvalue("operateMode", 2);
-					}	
+					}
+					$this->setvalue("operateScheduledOpen", $Payload['operateScheduledOpen']);
+			
 				}
 
 
@@ -648,6 +659,8 @@ declare(strict_types=1);
 					{
 						$this->setvalue("operateMode", 3);
 					}	
+					$this->setvalue("operateSelfPoweredOpen", $Payload['operateSelfPoweredOpen']);
+	
 				}	
 
 				if (array_key_exists('operateScheduledOpen', $Payload))
@@ -656,6 +669,7 @@ declare(strict_types=1);
 					{
 						$this->setvalue("operateMode", 4);
 					}	
+					$this->setvalue("operateScheduledOpen", $Payload['operateScheduledOpen']);
 				}	
 			}
 	
