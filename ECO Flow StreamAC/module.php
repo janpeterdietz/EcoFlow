@@ -403,7 +403,8 @@ declare(strict_types=1);
 			{
 				case 1:
 					//$params = ['cfgEnergyStrategyOperateMode' => ['operateTouModeOpen' => true]];
-					$params = ['cfgchgPowerLoopRef' => 324];
+					$params = ['pceFreeSetDischgPwr' => ['dischg_pwr' => 245]];
+					
 					
 					break;
 				case 2:
