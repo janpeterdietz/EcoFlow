@@ -403,8 +403,8 @@ declare(strict_types=1);
 			{
 				case 1:
 					//$params = ['cfgEnergyStrategyOperateMode' => ['operateTouModeOpen' => true]];
-					$params = ['pceFreeSetDischgPwr' => ['dischg_pwr' => 245]];
-					
+					$params = ['mppt.cfgChgWatts' => 500];
+					return;
 					break;
 				case 2:
 					//$params = ['cfgEnergyStrategyOperateMode' => ['operateScheduledOpen' => true]];
