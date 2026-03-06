@@ -403,7 +403,7 @@ declare(strict_types=1);
 			{
 				case 1:
 					//$params = ['cfgEnergyStrategyOperateMode' => ['operateTouModeOpen' => true]];
-					$params = ['mppt.cfgChgWatts' => 500];
+					$params = ['mppt' =>  ['cfgChgWatts' => 500]];
 					break;
 				case 2:
 					//$params = ['cfgEnergyStrategyOperateMode' => ['operateScheduledOpen' => true]];
