@@ -100,14 +100,14 @@ declare(strict_types=1);
 		{
 			return '{"type": "connect", "modules": [{
 				"moduleID": "{F7A0DD2E-7684-95C0-64C2-D2A9DC47577B}",
-				"configuration": {
-					"ClientID": "b10c75459d64cafb5d78"
 				},
 				"initial": {
 					"KeepAliveInterval": 60
 				}
 			}]}';
 		}
+
+
 
 		public function Destroy()
 		{
