@@ -516,8 +516,8 @@ declare(strict_types=1);
 					$this->setoperateMode($Value);
 					break;
 
-				case 'setAcDischargingPower':
-					$this->setAcDischargingPower($Value);
+				case 'setAcChargingPower':
+					$this->setAcChargingPower($Value);
 					break;
 
 
