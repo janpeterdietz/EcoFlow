@@ -348,7 +348,7 @@ declare(strict_types=1);
 		$tsend = '/open/' . $UserName . '/' . $SN . '/set';
 		
 // Feldname 'chgWatts' statt 'slowChgPower'
-    $params = ['chgWatts' => (int)$value];
+    $params = ['homeNeedPowerLimited' => (int)$value];
 
 		$payload = [
 			'id'       => time(),
