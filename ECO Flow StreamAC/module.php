@@ -87,6 +87,7 @@ declare(strict_types=1);
 			$this->RegisterVariableBoolean("operateSelfPoweredOpen", "operateSelfPoweredOpen", "", 83) ;
 			$this->RegisterVariableBoolean("operateIntelligentScheduleModeOpen", "operateIntelligentScheduleModeOpen", "", 84) ;
 		
+			$this->RegisterVariableFloat("setAcDischargingPower", "setAcDischargingPower", "~Watt", 99) ;
 			
 		
 
