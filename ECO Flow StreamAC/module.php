@@ -347,8 +347,8 @@ declare(strict_types=1);
 		
 		$tsend = '/open/' . $UserName . '/' . $SN . '/set';
 		
-		// Parameter für die AC-Ladeleistung
-		$params = ['slowChgPower' => $value];
+// Feldname 'chgWatts' statt 'slowChgPower'
+    $params = ['chgWatts' => (int)$value];
 
 		$payload = [
 			'id'       => time(),
