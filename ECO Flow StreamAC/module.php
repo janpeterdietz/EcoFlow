@@ -346,8 +346,11 @@ declare(strict_types=1);
 			
 			$tsend = '/open/' . $UserName . '/' . $SN . '/set';
 			
-			// Parameter für die maximale Entladeleistung (in Watt)
-			$params = ['maxDischgPower' => $value];
+			// Wechselrichter-spezifisches Parameter-Set für den StreamAC
+    $params = [
+        'cmdCode'     => 'WN511_SET_REQUEST_STREAM_CUSTOM',
+        'customCmdVal' => $value
+    ];
 
 			$payload = [
 				'id'       => time(),
