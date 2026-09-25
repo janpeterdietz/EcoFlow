@@ -327,55 +327,49 @@ declare(strict_types=1);
 			$this->Send($send_data_str);				
 		}
 
-		public function setAcDischargingPower(int $value)
-		{
-			// Wertebereich begrenzen (z. B. zwischen 0W und 800W bzw. max. Wechselrichterleistung)
-			if ($value < 0)
-			{
-				$value = 0;
-			}
-			else if ($value > 800)
-			{
-				$value = 800; // Je nach Modell anpassen (z. B. 600, 800 oder 1200)
-			}
+	public function setAcDischargingPower(int $value)
+{
+    if ($value < 0) {
+        $value = 0;
+    } else if ($value > 800) {
+        $value = 800;
+    }
 
-			$value = (int)$value;
+    $UserName = $this->ReadAttributeString('Mqtt_UserName');
+    $SN       = $this->ReadPropertyString('Seriennummer');        
+    
+    $tsend = '/open/' . $UserName . '/' . $SN . '/set';
 
-			$UserName = $this->ReadAttributeString('Mqtt_UserName');
-			$SN       = $this->ReadPropertyString('Seriennummer');        
-			
-			$tsend = '/open/' . $UserName . '/' . $SN . '/set';
-			
-$params = [
-    'permanentWatts' => $value * 10 // z. B. 1500 für 150W
-];
+    // StreamAC erwartet Leistung oft in 0.1 Watt (150W -> 1500)
+    $params = [
+        'value'     => (int)($value * 10),
+        'taskIndex' => 0
+    ];
 
-			$payload = [
-				'id'       => time(),
-				'version'  => "1.0",
-				'sn'       => $SN,
-				'cmdId'    => 17,
-				'cmdFunc'  => 254,
-				'dirDest'  => 1,
-				'dirSrc'   => 1,
-				'dest'     => 2,
-				'needAck'  => true,
-				'params'   => $params
-			];
+    $payload = [
+        'id'       => time(),
+        'version'  => "1.0",
+        'sn'       => $SN,
+        'cmdId'    => 1,        // Wichtig: cmdId 1 statt 17 bei Power-Commands!
+        'cmdFunc'  => 20,       // Wichtig: cmdFunc 20 für Stream-Leistung
+        'dirDest'  => 1,
+        'dirSrc'   => 1,
+        'dest'     => 2,
+        'needAck'  => true,
+        'params'   => $params
+    ];
 
-			$send_data = [
-				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-				'PacketType'       => 3,
-				'QualityOfService' => 0,
-				'Retain'           => false,
-				'Topic'            => $tsend,
-				'Payload'          => json_encode($payload)
-			];
+    $send_data = [
+        'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+        'PacketType'       => 3,
+        'QualityOfService' => 0,
+        'Retain'           => false,
+        'Topic'            => $tsend,
+        'Payload'          => json_encode($payload)
+    ];
 
-			$send_data_str = json_encode($send_data);
-
-			$this->Send($send_data_str);                
-		}
+    $this->Send(json_encode($send_data));                
+}
 
 		public function setAcChargingPower(int $value)
 		{
