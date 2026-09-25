@@ -87,8 +87,8 @@ declare(strict_types=1);
 			$this->RegisterVariableBoolean("operateSelfPoweredOpen", "operateSelfPoweredOpen", "", 83) ;
 			$this->RegisterVariableBoolean("operateIntelligentScheduleModeOpen", "operateIntelligentScheduleModeOpen", "", 84) ;
 		
-			$this->RegisterVariableFloat("setAcDischargingPower", "setAcDischargingPower", "~Watt", 99) ;
-				$this->EnableAction('setAcDischargingPower');
+			$this->RegisterVariableFloat("setAcChargingPower", "setAcChargingPower", "~Watt", 99) ;
+				$this->EnableAction('setAcChargingPower');
 		
 
 
@@ -327,50 +327,7 @@ declare(strict_types=1);
 			$this->Send($send_data_str);				
 		}
 
-	public function setAcDischargingPower(int $value)
-{
-    if ($value < 0) {
-        $value = 0;
-    } else if ($value > 800) {
-        $value = 800;
-    }
-
-    $UserName = $this->ReadAttributeString('Mqtt_UserName');
-    $SN       = $this->ReadPropertyString('Seriennummer');        
-    
-    $tsend = '/open/' . $UserName . '/' . $SN . '/set';
-
-    // StreamAC erwartet Leistung oft in 0.1 Watt (150W -> 1500)
-    $params = [
-        'value'     => (int)($value * 10),
-        'taskIndex' => 0
-    ];
-
-    $payload = [
-        'id'       => time(),
-        'version'  => "1.0",
-        'sn'       => $SN,
-        'cmdId'    => 1,        // Wichtig: cmdId 1 statt 17 bei Power-Commands!
-        'cmdFunc'  => 20,       // Wichtig: cmdFunc 20 für Stream-Leistung
-        'dirDest'  => 1,
-        'dirSrc'   => 1,
-        'dest'     => 2,
-        'needAck'  => true,
-        'params'   => $params
-    ];
-
-    $send_data = [
-        'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
-        'PacketType'       => 3,
-        'QualityOfService' => 0,
-        'Retain'           => false,
-        'Topic'            => $tsend,
-        'Payload'          => json_encode($payload)
-    ];
-
-    $this->Send(json_encode($send_data));                
-}
-
+	
 		public function setAcChargingPower(int $value)
 		{
 		// Wertebereich begrenzen (z. B. zwischen 100W und 2000W / je nach Akku-Spezifikation)
