@@ -326,6 +326,103 @@ declare(strict_types=1);
 			$this->Send($send_data_str);				
 		}
 
+		public function setAcDischargingPower(int $value)
+		{
+			// Wertebereich begrenzen (z. B. zwischen 0W und 800W bzw. max. Wechselrichterleistung)
+			if ($value < 0)
+			{
+				$value = 0;
+			}
+			else if ($value > 800)
+			{
+				$value = 800; // Je nach Modell anpassen (z. B. 600, 800 oder 1200)
+			}
+
+			$value = (int)$value;
+
+			$UserName = $this->ReadAttributeString('Mqtt_UserName');
+			$SN       = $this->ReadPropertyString('Seriennummer');        
+			
+			$tsend = '/open/' . $UserName . '/' . $SN . '/set';
+			
+			// Parameter für die maximale Entladeleistung (in Watt)
+			$params = ['maxDischgPower' => $value];
+
+			$payload = [
+				'id'       => time(),
+				'version'  => "1.0",
+				'sn'       => $SN,
+				'cmdId'    => 17,
+				'cmdFunc'  => 254,
+				'dirDest'  => 1,
+				'dirSrc'   => 1,
+				'dest'     => 2,
+				'needAck'  => true,
+				'params'   => $params
+			];
+
+			$send_data = [
+				'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}',
+				'PacketType'       => 3,
+				'QualityOfService' => 0,
+				'Retain'           => false,
+				'Topic'            => $tsend,
+				'Payload'          => json_encode($payload)
+			];
+
+			$send_data_str = json_encode($send_data);
+
+			$this->Send($send_data_str);                
+		}
+
+		public function setAcChargingPower(int $value)
+		{
+		// Wertebereich begrenzen (z. B. zwischen 100W und 2000W / je nach Akku-Spezifikation)
+		if ($value < 100)
+		{
+			$value = 100;
+		}
+		else if ($value > 2000)
+		{
+			$value = 2000;
+		}
+
+		$value = (int)$value;
+
+		$UserName = $this->ReadAttributeString('Mqtt_UserName');
+		$SN       = $this->ReadPropertyString('Seriennummer');        
+		
+		$tsend = '/open/' . $UserName . '/' . $SN . '/set';
+		
+		// Parameter für die AC-Ladeleistung
+		$params = ['slowChgPower' => $value];
+
+		$payload = [
+			'id'       => time(),
+			'version'  => "1.0",
+			'sn'       => $SN,
+			'cmdId'    => 17,
+			'cmdFunc'  => 254,
+			'dirDest'  => 1,
+			'dirSrc'   => 1,
+			'dest'     => 2,
+			'needAck'  => true,
+			'params'   => $params
+		];
+
+		$send_data = [
+			'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}', // IP-Symcon MQTT Client DataID
+			'PacketType'       => 3,
+			'QualityOfService' => 0,
+			'Retain'           => false, // Wichtig: Für Befehle besser 'false', damit alte Werte nicht auf dem Broker hängen bleiben
+			'Topic'            => $tsend,
+			'Payload'          => json_encode($payload)
+		];
+
+		$send_data_str = json_encode($send_data);
+
+		$this->Send($send_data_str);                
+		}
 		
 		public function setfeedGridMode(int $value)
 		{
@@ -464,6 +561,10 @@ declare(strict_types=1);
 
 				case 'operateMode':
 					$this->setoperateMode($Value);
+					break;
+
+				case 'setAcDischargingPower':
+					$this->setAcDischargingPower($Value);
 					break;
 
 
