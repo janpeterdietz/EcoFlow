@@ -346,11 +346,9 @@ declare(strict_types=1);
 			
 			$tsend = '/open/' . $UserName . '/' . $SN . '/set';
 			
-			// Wechselrichter-spezifisches Parameter-Set für den StreamAC
-    $params = [
-        'cmdCode'     => 'WN511_SET_REQUEST_STREAM_CUSTOM',
-        'customCmdVal' => $value
-    ];
+$params = [
+    'permanentWatts' => $value * 10 // z. B. 1500 für 150W
+];
 
 			$payload = [
 				'id'       => time(),
