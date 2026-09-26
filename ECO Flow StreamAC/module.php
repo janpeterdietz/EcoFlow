@@ -86,10 +86,7 @@ declare(strict_types=1);
 			$this->RegisterVariableBoolean("operateScheduledOpen", "operateScheduledOpen", "", 82) ;
 			$this->RegisterVariableBoolean("operateSelfPoweredOpen", "operateSelfPoweredOpen", "", 83) ;
 			$this->RegisterVariableBoolean("operateIntelligentScheduleModeOpen", "operateIntelligentScheduleModeOpen", "", 84) ;
-		
-			$this->RegisterVariableFloat("setAcChargingPower", "setAcChargingPower", "~Watt", 99) ;
-				$this->EnableAction('setAcChargingPower');
-		
+	
 
 
 			$this->RegisterVariableInteger("feedGridMode", "feedGridMode", "EF.feedGridMode", 30) ;
@@ -328,54 +325,7 @@ declare(strict_types=1);
 		}
 
 	
-		public function setAcChargingPower(int $value)
-		{
-		// Wertebereich begrenzen (z. B. zwischen 100W und 2000W / je nach Akku-Spezifikation)
-		if ($value < 100)
-		{
-			$value = 100;
-		}
-		else if ($value > 2000)
-		{
-			$value = 2000;
-		}
-
-		$value = (int)$value;
-
-		$UserName = $this->ReadAttributeString('Mqtt_UserName');
-		$SN       = $this->ReadPropertyString('Seriennummer');        
-		
-		$tsend = '/open/' . $UserName . '/' . $SN . '/set';
-		
-// Feldname 'chgWatts' statt 'slowChgPower'
-    $params = ['homeNeedPowerLimited' => (int)$value];
-
-		$payload = [
-			'id'       => time(),
-			'version'  => "1.0",
-			'sn'       => $SN,
-	'cmdId'    => 134,      // Wichtig: Netz/Power Command-ID
-        'cmdFunc'  => 32,
-			'dirDest'  => 1,
-			'dirSrc'   => 1,
-			'dest'     => 2,
-			'needAck'  => true,
-			'params'   => $params
-		];
-
-		$send_data = [
-			'DataID'           => '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}', // IP-Symcon MQTT Client DataID
-			'PacketType'       => 3,
-			'QualityOfService' => 0,
-			'Retain'           => false, // Wichtig: Für Befehle besser 'false', damit alte Werte nicht auf dem Broker hängen bleiben
-			'Topic'            => $tsend,
-			'Payload'          => json_encode($payload)
-		];
-
-		$send_data_str = json_encode($send_data);
-
-		$this->Send($send_data_str);                
-		}
+	
 		
 		public function setfeedGridMode(int $value)
 		{
@@ -514,10 +464,6 @@ declare(strict_types=1);
 
 				case 'operateMode':
 					$this->setoperateMode($Value);
-					break;
-
-				case 'setAcChargingPower':
-					$this->setAcChargingPower($Value);
 					break;
 
 
